@@ -1,10 +1,19 @@
 {
   "dependencies": {
-    "expo": "^48.0.7",
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@expo/webpack-config": "^18.0.1",
+    "@mui/icons-material": "^5.11.16",
+    "@mui/material": "^5.13.3",
+    "@react-native-community/geolocation": "^3.0.6",
+    "axios": "^1.4.0",
+    "expo": "~48.0.18",
+    "expo-status-bar": "~1.4.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-native": "0.71.3",
-    "react-native-web": "~0.18.7"
+    "react-native": "0.71.8",
+    "react-native-web": "~0.18.10",
+    "react-router-native": "^6.11.2"
   },
   "devDependencies": {
     "@babel/core": "^7.19.3",
