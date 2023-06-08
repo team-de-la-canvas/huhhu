@@ -17,6 +17,8 @@ import RestoreIcon from '@mui/icons-material/Restore';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 
+//Styles
+import SpinningText from "./SpinningText";
 
 export default function App() {
 
@@ -40,7 +42,7 @@ export default function App() {
       <Text>{apiJson.data != null ? apiJson.data.title : 'Not received data from api yet'}</Text>
       <Text>latitude:</Text>
       <Text>{location.coords != null ? location.coords.latitude : 'not received location yet'}</Text>
-      <Text>longitude:</Text>
+      <SpinningText>longitude:</SpinningText>
       <Text>{location.coords != null ? location.coords.longitude : 'not received location yet'}</Text>
       <StatusBar style="auto" />
       <BottomNavigation
