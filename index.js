@@ -13,17 +13,39 @@ app.get("/", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
+  // return on successfully login a code for a micro password
   const clientName = req.body.clientName;
+  const clientCode = req.body.code;
 
-  if (!clients.includes(clientName)) {
-    clients.push(clientName);
-    res.send("successfully logged in: " + clientName);
+  const clientNames= clients.map(client => client.name);
+  const client = clients.find(client => client.name === clientName);
+  if (clientNames && client) {
+    if (!clientNames.includes(clientName) || client.code !== clientCode) {
+      res.send("error, wrong code");
+    } else {
+      client.authenticated = true;
+      res.send("successfully logged in!");
+    }
+  } else {
+    res.send("client not registered yet");
   }
-  res.send("already logged in!");
 });
 
+app.post("/auth", (req,res) => {
+  const clientName = req.body.clientName;
+  if(clients.find(cl=>cl.name===clientName)) {
+    res.send("already authenticated under this clientName");
+    return;
+  }
+
+  const code = Math.random() * 10000;
+  clients.push({name: clientName, code: code});
+  res.send({ code: code });
+  console.log(clients)
+})
+
 app.get("/clients", (req, res) => {
-  res.json(clients);
+  res.json(clients.filter(cl=>cl.authenticated).map(cl=>cl.name));
 });
 
 app.listen(port, () => {
