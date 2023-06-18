@@ -13,7 +13,6 @@ app.get("/", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  // return on successfully login a code for a micro password
   const clientName = req.body.clientName;
   const clientCode = req.body.code;
 
@@ -32,13 +31,13 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/auth", (req,res) => {
+  // returns on successful login a code for which is used to authenticate clients for future requests
   const clientName = req.body.clientName;
   if(clients.find(cl=>cl.name===clientName)) {
     res.send("already authenticated under this clientName");
     return;
   }
-
-  const code = Math.random() * 10000;
+  const code = Math.floor(Math.random() * 10000);
   clients.push({name: clientName, code: code});
   res.send({ code: code });
   console.log(clients)
@@ -48,6 +47,23 @@ app.get("/clients", (req, res) => {
   res.json(clients.filter(cl=>cl.authenticated).map(cl=>cl.name));
 });
 
+app.post("/match", (req, res) => { //the client that wants to match with randomly chosen other client needs to provide their own code for authorization.
+    const clientCode = req.body.code;
+    const otherClient = clients.find(cl => cl.authenticated && !cl.code !== clientCode);
+    const thisClient = clients.find(cl => cl.authenticated && cl.code === clientCode);
+
+    if (thisClient && otherClient) {
+        thisClient.activeMatch = otherClient.name;
+        otherClient.activeMatch = thisClient.name;
+        res.send(` successfully matched with other client: ${otherClient.name}`);
+        console.log(clients);
+    }
+    else {
+        res.send("client mismatch");
+    }
+
+
+})
 app.listen(port, () => {
   console.log(`App listening at http://localhost:${port}`);
 });
