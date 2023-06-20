@@ -1,5 +1,5 @@
 const initialState = {
-    items: [],
+    content: [],
     loading: false,
     error: null
 };
@@ -16,14 +16,14 @@ export default function dataReducer(state = initialState, action) {
             return {
                 ...state,
                 loading: false,
-                items: action.payload.data
+                content: action.payload.data
             };
         case 'FETCH_DATA_FAILURE':
             return {
                 ...state,
                 loading: false,
                 error: action.payload.error,
-                items: []
+                content: []
             };
         default:
             return state;

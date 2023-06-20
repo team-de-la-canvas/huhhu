@@ -17,7 +17,7 @@ export const fetchDataFailure = error => ({
 export function fetchData() {
     return dispatch => {
         dispatch(fetchDataBegin());
-        return axios.get('/api/data')
+        return axios.get('http://localhost:3000')
             .then(response => {
                 dispatch(fetchDataSuccess(response.data));
                 return response.data;
