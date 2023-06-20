@@ -1,8 +1,7 @@
 import React, { useRef, useEffect } from 'react';
-import { Text, Animated, Easing, StyleSheet } from 'react-native';
-import AnimatedInterpolation = Animated.AnimatedInterpolation;
+import { Animated, Easing, StyleSheet } from 'react-native';
 
-const SpinningText = () => {
+const SpinningText = ({children}) => {
     const rotation = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
@@ -29,7 +28,7 @@ const SpinningText = () => {
 
     return (
         <Animated.Text style={[styles.textStyle, transformStyle]}>
-            longitude:
+            {children}
         </Animated.Text>
     );
 };
