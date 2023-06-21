@@ -1,6 +1,6 @@
 import {useState} from "react";
 import Main from "./Main";
-import Login from "./Login";
+import Login from "./screens/Login";
 
 export default function Root() {
     var [loggedIn, setLoggedIn] = useState(false);

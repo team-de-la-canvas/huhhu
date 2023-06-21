@@ -16,7 +16,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 
 //Styles
-import SpinningText from "./SpinningText";
+import SpinningText from "../components/SpinningText";
 import { Visibility } from "@mui/icons-material";
 import {Button, TextField, ToggleButton} from "@mui/material";
 

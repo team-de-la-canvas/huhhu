@@ -1,7 +1,7 @@
 import React from "react";
 import {NavigationContainer} from "@react-navigation/native";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
-import TestScreen from "./TestScreen";
+import TestScreen from "../screens/TestScreen";
 import {Text, View} from "react-native";
 import TabBarIcon from "@react-navigation/bottom-tabs/lib/typescript/src/views/TabBarIcon";
 import {Icon, Stack} from "@mui/material";
