@@ -6,6 +6,7 @@
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.13.3",
     "@react-native-community/geolocation": "^3.0.6",
+    "@reduxjs/toolkit": "^1.9.5",
     "axios": "^1.4.0",
     "expo": "~48.0.18",
     "expo-status-bar": "~1.4.4",
