@@ -2,6 +2,9 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchUsers } from '../state/userSlice';
 import {AppDispatch, RootState} from "../state/store";
+import {Box, List, ListItem, ListItemText} from "@mui/material";
+import {Text} from "react-native";
+
 
 function UserList() {
     const dispatch:AppDispatch = useDispatch();
@@ -11,19 +14,19 @@ function UserList() {
         dispatch(fetchUsers());
     }, [dispatch]);
 
-    if (users.length === 0) {
-        return <div>Loading...</div>;
+    if (!users || users.length === 0) {
+        return <Box>Loading...</Box>;
     }
 
     return (
-        <div>
-            <h1>User List</h1>
-            <ul>
-                {users.map((user) => (
-                    <li key={user.id}>{user.name}</li>
-                ))}
-            </ul>
-        </div>
+        <Box>
+            <Text>User List of lenght: {users.length}</Text>
+            <List>
+                {users.map(x=>
+                    <ListItem key={3}> <ListItemText primary={x} /></ListItem>
+                )}
+            </List>
+        </Box>
     );
 }
 

@@ -7,14 +7,8 @@ interface User {
     name: string;
 }
 
-interface UserName {
-    id: string;
-    firstName: string;
-    lastName: string;
-}
-
 interface UserState {
-    users: User[];
+    users: string[];
 }
 
 const initialState: UserState = {
@@ -25,16 +19,21 @@ const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-        addUser(state, action: PayloadAction<User>) {
+        addUser(state, action: PayloadAction<string>) {
             state.users.push(action.payload);
+        },
+        setUsers: (state, action: PayloadAction<string[]>) => {
+            state.users = action.payload;
         },
     },
 });
 
-export const { addUser } = userSlice.actions;
+export const { addUser,setUsers } = userSlice.actions;
 
 export const fetchUsers = (): AppThunk => async (dispatch) => {
-    dispatch(fetchData('https://example.com/users'));
+    const response = await dispatch(fetchData('http://localhost:3000/clients'));
+    const users = response.payload;
+    dispatch(setUsers(users));
 };
 
 
