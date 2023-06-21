@@ -21,13 +21,14 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import SpinningText from "./SpinningText";
 import StateProvider from "./src/providers/stateProvider";
 import ExampleConsumer from "./src/examples/ExampleConsumer";
+import UserList from "./src/examples/UserList";
 
 export default function App() {
 
 
   return (
     <StateProvider>
-        <ExampleConsumer/>
+        <UserList/>
     </StateProvider>
   );
 }
