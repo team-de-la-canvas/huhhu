@@ -31,10 +31,17 @@ const callApi = async <T>(
     }
 };
 
-export const fetchData = createAsyncThunk(
-    'api/fetchData',
+export const getData = createAsyncThunk(
+    'api/getData',
     async (url: string) => {
         return callApi(url, 'GET');
+    }
+);
+
+export const postData = createAsyncThunk(
+    'api/postData',
+    async <T>(params: { url: string; payload: T }) => {
+        return callApi(params.url, 'POST', params.payload);
     }
 );
 
@@ -58,15 +65,28 @@ const apiSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(fetchData.pending, (state) => {
+            .addCase(getData.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(fetchData.fulfilled, (state, action) => {
+            .addCase(getData.fulfilled, (state, action) => {
                 state.loading = false;
                 state.data = action.payload;
             })
-            .addCase(fetchData.rejected, (state, action) => {
+            .addCase(getData.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+                state.data = null;
+            })
+            .addCase(postData.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(postData.fulfilled, (state,action) => {
+                state.loading = false;
+                state.data = action.payload;
+            })
+            .addCase(postData.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
                 state.data = null;

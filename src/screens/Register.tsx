@@ -3,21 +3,24 @@ import {Button, Stack, TextField} from "@mui/material";
 import {SafeAreaView, StyleSheet, Text} from "react-native";
 import Box from "@mui/material/Box";
 import {ViewHeadline} from "@mui/icons-material";
+import {useDispatch} from "react-redux";
+import {AppDispatch} from "../state/store";
+import { register } from "../state/authSlice";
 
-export default function Login({loginWithUsername}){
+export default function Register(){
+    const dispatch:AppDispatch = useDispatch();
     const [username, setUserName] = useState("");
     return(
         <SafeAreaView style={styles.outer}>
             <Box style={styles.container}>
-                <Text style={styles.title}>Login</Text>
+                <Text style={styles.title}>Register</Text>
                 <Stack style={styles.stack}>
                     <TextField id="outlined-basic" label="Username" variant="outlined" onChange={event =>{
                         setUserName(event.target.value);
                     }}/>
-                    {/*<TextField id="outlined-basic" label="Password" variant="outlined" type={"password"} />*/}
                     <Button onClick={e=>{
-                        loginWithUsername(username);
-                    }}>Login</Button>
+                        dispatch(register(username));
+                    }}>Register</Button>
                 </Stack>    
             </Box>
         </SafeAreaView>
