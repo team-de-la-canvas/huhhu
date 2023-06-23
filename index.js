@@ -6,7 +6,7 @@ const port = 3000;
 app.use(cors());
 app.use(express.json());
 
-const clients = [];
+let clients = [];
 
 app.get("/", (req, res) => {
     res.send("Hello World!");
@@ -81,15 +81,23 @@ app.post("/setLocation", (req, res) => {
     const clientCode = req.body.clientCode;
     const thisClient = clients.find(cl => cl.authenticated && cl.code === clientCode);
     thisClient.location = req.body.clientLocation;
+    res.send(req.body.clientLocation)
 })
 
 
 app.post("/getLocationOfMatch", (req, res) => {
     const clientCode = req.body.clientCode;
     const thisClient = clients.find(cl => cl.authenticated && cl.code === clientCode);
-    const otherClient = clients.find(cl => cl.authenticated && cl.name === thisClient.name);
-    res.body.clientLocation = otherClient.location;
+    const otherClient = clients.find(cl => cl.authenticated && cl.activeMatchWith === thisClient.name);
+    res.send({
+        clientLocation:otherClient.location 
+    })
 })
+
+app.post("/debugSetState", (req, res) => {
+    clients = req.body;
+    res.send(req.body)
+});
 
 app.listen(port, () => {
     console.log(`App listening at http://localhost:${port}`);
