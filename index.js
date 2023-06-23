@@ -6,7 +6,7 @@ const port = 3000;
 app.use(cors());
 app.use(express.json());
 
-const clients = [];
+let clients = [];
 
 app.get("/", (req, res) => {
     res.send("Hello World!");
@@ -75,6 +75,10 @@ app.get("/matches", (req,res) => {
         return result;
     }, []));
 })
+
+app.post("/debugSetState", (req, res) => {
+    clients = req.body;
+});
 
 app.listen(port, () => {
     console.log(`App listening at http://localhost:${port}`);
