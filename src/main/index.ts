@@ -1,5 +1,16 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import cors from 'cors';
+import {
+    ClientsRequest,
+    ClientsResponse,
+    LoginRequest,
+    LoginResponse, MatchesRequest, MatchesResponse,
+    MatchRequest, MatchResponse,
+    RegistrationRequest,
+    RegistrationResponse
+} from "../shared/routes";
+import {Client} from "../shared/models";
+
 
 const app = express();
 const port = 3000;
@@ -7,14 +18,14 @@ const port = 3000;
 app.use(cors());
 app.use(express.json());
 
-const clients = [];
+const clients : Client[] = [];
 
-app.get("/", (req, res) => {
+app.get("/", (req:Request, res:Response) => {
     res.send("Hello World!");
 });
 
 // returns on successful login a code for which is used to authenticate clients for future requests
-app.post("/reg", (req, res) => {
+app.post("/reg", (req: Request<RegistrationRequest>, res: Response<RegistrationResponse | string>) => {
     const clientName = req.body.clientName;
     if (!clientName || clients.find(cl => cl.name === clientName)) {
         res.send("Error registering under this clientName. Potentially already registered.");
@@ -26,7 +37,7 @@ app.post("/reg", (req, res) => {
     console.log(clients)
 })
 
-app.post("/login", (req, res) => {
+app.post("/login", (req: Request<LoginRequest>, res: Response<LoginResponse>) => {
     const clientName = req.body.clientName;
     const clientCode = req.body.clientCode;
 
@@ -45,7 +56,7 @@ app.post("/login", (req, res) => {
 });
 
 
-app.post("/match", (req, res) => { //the client that wants to match with randomly chosen other client needs to provide their own code for authorization.
+app.post("/match", (req: Request<MatchRequest>, res: Response<MatchResponse>) => { //the client that wants to match with randomly chosen other client needs to provide their own code for authorization.
     const clientCode = req.body.clientCode;
     const otherClient = clients.find(cl => cl.authenticated && !cl.code !== clientCode);
     const thisClient = clients.find(cl => cl.authenticated && cl.code === clientCode);
@@ -53,18 +64,21 @@ app.post("/match", (req, res) => { //the client that wants to match with randoml
     if (thisClient && otherClient && thisClient.name !== otherClient.name) {
         thisClient.activeMatchWith = otherClient.name;
         otherClient.activeMatchWith = thisClient.name;
-        res.send(` successfully matched with other client: ${otherClient.name}`);
+        res.send({
+            messsage: ` successfully matched with other client: ${otherClient.name}`,
+            
+        });
         console.log(clients);
     } else {
-        res.send("client mismatch");
+        res.send({message: "client mismatch"});
     }
 })
 
-app.get("/clients", (req, res) => {
+app.get("/clients", (req: Request<ClientsRequest>, res:Response<ClientsResponse>) => {
     res.json(clients.filter(cl => cl.authenticated).map(cl => cl.name));
 });
 
-app.get("/matches", (req,res) => {
+app.get("/matches", (req: Request<MatchesRequest>,res:Response<MatchesResponse>) => {
     res.send(clients.reduce((result, item) => {
         if (item.activeMatchWith) {
             // Ueberpruefe, ob das Paar schon im result-Array existiert

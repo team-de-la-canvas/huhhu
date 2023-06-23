@@ -2,10 +2,10 @@
   "name": "huhuu-webapi-prototype",
   "version": "1.0.0",
   "description": "basic webapi implementation to mock peer to peer connection for huhuu prototype",
-  "main": "src/index.ts",
+  "main": "src/main/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx ts-node src/index.ts"
+    "start": "npx ts-node src/main/index.ts"
   },
   "author": "",
   "license": "ISC",
