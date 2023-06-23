@@ -25,7 +25,7 @@ app.post("/reg", (req, res) => {
     console.log(clients)
 })
 
-app.post("/login", (req, res) => {
+app.post("/visible", (req, res) => {
     const clientName = req.body.clientName;
     const clientCode = req.body.clientCode;
 
