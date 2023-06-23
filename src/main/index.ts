@@ -37,7 +37,7 @@ app.post("/reg", (req: Request<RegistrationRequest>, res: Response<RegistrationR
     console.log(clients)
 })
 
-app.post("/login", (req: Request<LoginRequest>, res: Response<LoginResponse>) => {
+app.post("/visible", (req: Request<LoginRequest>, res: Response<LoginResponse>) => {
     const clientName = req.body.clientName;
     const clientCode = req.body.clientCode;
 
