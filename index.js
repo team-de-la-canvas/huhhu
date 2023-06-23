@@ -78,6 +78,7 @@ app.get("/matches", (req,res) => {
 
 app.post("/debugSetState", (req, res) => {
     clients = req.body;
+    res.send(req.body)
 });
 
 app.listen(port, () => {
