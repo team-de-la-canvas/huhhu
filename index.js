@@ -76,6 +76,21 @@ app.get("/matches", (req,res) => {
     }, []));
 })
 
+
+app.post("/setLocation", (req, res) => { 
+    const clientCode = req.body.clientCode;
+    const thisClient = clients.find(cl => cl.authenticated && cl.code === clientCode);
+    thisClient.location = req.body.clientLocation;
+})
+
+
+app.post("/getLocationOfMatch", (req, res) => {
+    const clientCode = req.body.clientCode;
+    const thisClient = clients.find(cl => cl.authenticated && cl.code === clientCode);
+    const otherClient = clients.find(cl => cl.authenticated && cl.name === thisClient.name);
+    res.body.clientLocation = otherClient.location;
+})
+
 app.listen(port, () => {
     console.log(`App listening at http://localhost:${port}`);
 });
