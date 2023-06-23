@@ -1,9 +1,11 @@
 import {configureStore, ThunkAction, Action, Dispatch} from '@reduxjs/toolkit';
 import userReducer from './userSlice';
+import huntingReducer from './huntingSlice';
 
 const store = configureStore({
     reducer: {
         user: userReducer,
+        hunting: huntingReducer
     },
 });
 
