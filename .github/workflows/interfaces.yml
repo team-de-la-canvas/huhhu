@@ -29,6 +29,6 @@ jobs:
         run: |
           npm config set '@team-de-la-canvas:registry' 'https://npm.pkg.github.com/'
           npm config set '//npm.pkg.github.com/:_authToken' "${{ secrets.GITHUB_TOKEN }}"
-          npm publish --prefix ./dist/shared --registry=https://npm.pkg.github.com/
+          npm publish --prefix ./dist/shared --registry=https://npm.pkg.github.com/ --access restricted --scope=@team-de-la-canvas
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
