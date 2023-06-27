@@ -5,8 +5,7 @@
   "main": "src/main/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx ts-node src/main/index.ts",
-    "build-interfaces": "tsc --project ./src/shared/tsconfig.json"
+    "start": "npx ts-node src/main/index.ts"
   },
   "author": "",
   "license": "ISC",
