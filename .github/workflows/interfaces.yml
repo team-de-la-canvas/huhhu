@@ -2,8 +2,7 @@ name: Release Interfaces to GitHub Packages
 
 on:
   push:
-    branches:
-      - '*'
+    branches: ['*']
 
 jobs:
   release:
