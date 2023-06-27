@@ -45,13 +45,19 @@ app.post("/visible", (req: Request<LoginRequest>, res: Response<LoginResponse>) 
     const client = clients.find(client => client.name === clientName);
     if (clientNames && client) {
         if (!clientNames.includes(clientName) || client.code !== clientCode) {
-            res.send("error, wrong code");
+            res.send({
+                message:"error, wrong code"
+            });
         } else {
             client.authenticated = true;
-            res.send("successfully logged in!");
+            res.send({
+                message: "successfully logged in!"
+            });
         }
     } else {
-        res.send("client not registered yet");
+        res.send({
+            message: "client not registered yet"
+        });
     }
 });
 
@@ -65,21 +71,24 @@ app.post("/match", (req: Request<MatchRequest>, res: Response<MatchResponse>) =>
         thisClient.activeMatchWith = otherClient.name;
         otherClient.activeMatchWith = thisClient.name;
         res.send({
-            messsage: ` successfully matched with other client: ${otherClient.name}`,
-            
+            matchName: "otherClient.name", 
+            message: ` successfully matched with other client: ${otherClient.name}`,
         });
         console.log(clients);
     } else {
-        res.send({message: "client mismatch"});
+        res.send({message: "client mismatch", matchName: undefined});
     }
 })
 
 app.get("/clients", (req: Request<ClientsRequest>, res:Response<ClientsResponse>) => {
-    res.json(clients.filter(cl => cl.authenticated).map(cl => cl.name));
+    const authenticatedClients = clients.filter(cl => cl.authenticated).map(cl => cl.name);
+    res.json({
+        clients: authenticatedClients
+    });
 });
 
 app.get("/matches", (req: Request<MatchesRequest>,res:Response<MatchesResponse>) => {
-    res.send(clients.reduce((result, item) => {
+    const matches = clients.reduce((result:string[][], item) => {
         if (item.activeMatchWith) {
             // Ueberpruefe, ob das Paar schon im result-Array existiert
             if (!result.some(pair => pair.includes(item.name) && pair.includes(item.activeMatchWith))) {
@@ -88,7 +97,10 @@ app.get("/matches", (req: Request<MatchesRequest>,res:Response<MatchesResponse>)
             }
         }
         return result;
-    }, []));
+    }, [])
+    res.send({
+        matches: matches
+    });
 })
 
 
