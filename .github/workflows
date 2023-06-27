@@ -3,7 +3,7 @@ name: Release Interfaces to GitHub Packages
 on:
   push:
     branches:
-      - master
+      - '*'
 
 jobs:
   release:
