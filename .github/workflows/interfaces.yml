@@ -22,7 +22,7 @@ jobs:
         run: npm ci
 
       - name: Build interfaces
-        run: npm build-interfaces
+        run: npm run build-interfaces
 
       - name: Publish to GitHub Packages
         run: |
