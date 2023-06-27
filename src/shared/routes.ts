@@ -26,7 +26,7 @@ export interface MatchRequest {
 
 export interface MatchResponse {
     message: string;
-    matchName : string;
+    matchName : string|unknown;
 }
 
 export interface ClientsRequest {
@@ -35,7 +35,6 @@ export interface ClientsRequest {
 
 
 export interface ClientsResponse {
-    message: string;
     clients: string[]
 }
 
@@ -47,8 +46,7 @@ export interface MatchesRequest {
 
 
 export interface MatchesResponse {
-    message: string;
-    matchName : string;
+    matches : string[][];
 }
 
 
