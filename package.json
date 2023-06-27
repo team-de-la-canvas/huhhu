@@ -1,5 +1,5 @@
 {
-  "name": "huhuu-webapi-prototype",
+  "name": "@team-de-la-canvas/huhuu-webapi-prototype",
   "version": "1.0.0",
   "description": "basic webapi implementation to mock peer to peer connection for huhuu prototype",
   "main": "src/main/index.ts",
