@@ -18,7 +18,7 @@ const port = 3000;
 app.use(cors());
 app.use(express.json());
 
-const clients : Client[] = [];
+let clients: Client[]  = [];
 
 app.get("/", (req:Request, res:Response) => {
     res.send("Hello World!");
@@ -32,7 +32,7 @@ app.post("/reg", (req: Request<RegistrationRequest>, res: Response<RegistrationR
         return;
     }
     const code = Math.floor(Math.random() * 10000);
-    clients.push({name: clientName, code: code});
+    clients.push({name: clientName, code: code, location: undefined});
     res.send({clientCode: code});
     console.log(clients)
 })
@@ -90,6 +90,29 @@ app.get("/matches", (req: Request<MatchesRequest>,res:Response<MatchesResponse>)
         return result;
     }, []));
 })
+
+
+app.post("/setLocation", (req, res) => { 
+    const clientCode = req.body.clientCode;
+    const thisClient = clients.find(cl => cl.authenticated && cl.code === clientCode);
+    thisClient.location = req.body.clientLocation;
+    res.send(req.body.clientLocation)
+})
+
+
+app.post("/getLocationOfMatch", (req, res) => {
+    const clientCode = req.body.clientCode;
+    const thisClient = clients.find(cl => cl.authenticated && cl.code === clientCode);
+    const otherClient = clients.find(cl => cl.authenticated && cl.activeMatchWith === thisClient.name);
+    res.send({
+        clientLocation:otherClient.location 
+    })
+})
+
+app.post("/debugSetState", (req : Request<Client[]>, res : Response<Client[]>) => {
+    clients = req.body;
+    res.send(req.body)
+});
 
 app.listen(port, () => {
     console.log(`App listening at http://localhost:${port}`);

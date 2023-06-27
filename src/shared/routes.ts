@@ -1,3 +1,5 @@
+import {LocationModel} from "./models";
+
 export interface RegistrationRequest {
     clientName: string;
 }
@@ -47,4 +49,26 @@ export interface MatchesRequest {
 export interface MatchesResponse {
     message: string;
     matchName : string;
+}
+
+
+export interface GetLocationOfMatchRequest {
+    clientCode: number;
+}
+
+
+export interface GetLocationOfMatchResponse {
+    location : LocationModel
+    matchName : string;
+}
+
+
+export interface SetLocationRequest {
+    clientCode: number,
+    location : LocationModel
+}
+
+
+export interface SetLocationResponse {
+    location : LocationModel
 }
