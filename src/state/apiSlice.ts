@@ -1,6 +1,7 @@
 import {createSlice, PayloadAction, createAsyncThunk, AsyncThunk, AsyncThunkAction} from '@reduxjs/toolkit';
 import axios, { AxiosResponse, AxiosError } from 'axios';
-import { RootState, AppThunk } from './store';
+import {RootState, AppThunk, AppDispatch} from './store';
+import {RegistrationRequest, RegistrationResponse} from "../shared/routes";
 
 interface ApiState<T> {
     data: T | null;
@@ -14,14 +15,13 @@ const initialState: ApiState<any> = {
     error: null,
 };
 
-
-const callApi = async <ResponseType,RequestType>(
+const callApi = async (
     url: string,
     method: string,
-    payload?: RequestType
-): Promise<ResponseType> => {
+    payload?: any
+): Promise<any> => {
     try {
-        const response: AxiosResponse<ResponseType> = await axios.request({
+        const response: AxiosResponse = await axios.request({
             url,
             method,
             data: payload,
@@ -39,12 +39,45 @@ export const getData = createAsyncThunk(
     }
 );
 
-// export const postData = createAsyncThunk<void, >(
-//     'api/postData',
-//     async <T>(params: { url: string; payload: T }) => {
-//         return callApi(params.url, 'POST', params.payload);
-//     }
-// );
+type SuccessCallbackArgs<ResponseType> = {
+    payload: ResponseType
+    dispatch: AppDispatch,
+    getState: ()=> RootState
+}
+type FailureCallbackArgs<ResponseType> = {
+    error: string
+    dispatch: AppDispatch,
+    getState: ()=> RootState
+}
+type CallbackFunction<Args> = (request:Args)=> void;
+type PostRequestArguments<RequestType,ResponseType> = {
+    url: string,
+    payload: RequestType,
+    successFunction: CallbackFunction<SuccessCallbackArgs<ResponseType>>,
+    failureFunction: CallbackFunction<FailureCallbackArgs<ResponseType>>,
+}
+export const postDataAssume = <RequestType,ResponseType>(request: PostRequestArguments<RequestType,ResponseType>) =>  async (dispatch,getState)=> {
+    dispatch(postData({
+        url: request.url,
+        payload: request.payload,
+    }))
+    .then(({payload})=> request.successFunction({
+        payload,
+        dispatch,
+        getState
+    }))
+    .catch((error)=> request.failureFunction({
+        getState,
+        dispatch,
+        error
+    }));
+}
+export const postData = createAsyncThunk(
+    'api/postData',
+    async <T>(params: { url: string; payload: T }) => {
+        return callApi(params.url, 'POST', params.payload);
+    }
+);
 
 // export const postData = <RequestType, ResponseType>() =>
 //     createAsyncThunk<void, { url: string; payload: RequestType }>(
@@ -54,30 +87,29 @@ export const getData = createAsyncThunk(
 //         }
 //     );
 
+//
+//
+// type ApiDefinition<RequestType, ResponseType> = {
+//     url: string;
+//     payload: RequestType;
+// };
+// export const postData = <RequestType, ResponseType>(api: ApiDefinition<RequestType, ResponseType>): AsyncThunkAction<ResponseType, ApiDefinition<RequestType, ResponseType>, {}> => {
+//     return apiThunk<RequestType,ResponseType>("POST","api/postData")(api);
+// }
 
-
-type ApiDefinition<RequestType, ResponseType> = {
-    url: string;
-    payload: RequestType;
-};
-export const postData = <RequestType, ResponseType>(api: ApiDefinition<RequestType, ResponseType>): AsyncThunkAction<ResponseType, ApiDefinition<RequestType, ResponseType>, {}> => {
-    return apiThunk<RequestType,ResponseType>("POST","api/postData")(api);
-}
-
-
-
-export const apiThunk = <RequestType, ResponseType>(method: string,  reduxType: string) =>
-    createAsyncThunk<ResponseType, ApiDefinition<RequestType, ResponseType>>(
-        reduxType,
-        async (api) => {
-            return callApi<ResponseType,RequestType>(api.url, method, api.payload);
-        }
-    );
-
-
-export const updateData = <RequestType, ResponseType>(api: ApiDefinition<RequestType, ResponseType>) => {
-    return apiThunk<RequestType,ResponseType>("PUT","api/updateData")(api);
-}
+//
+// export const apiThunk = <RequestType, ResponseType>(method: string,  reduxType: string) =>
+//     createAsyncThunk<ResponseType, ApiDefinition<RequestType, ResponseType>>(
+//         reduxType,
+//         async (api) => {
+//             return callApi<ResponseType,RequestType>(api.url, method, api.payload);
+//         }
+//     );
+//
+//
+// export const updateData = <RequestType, ResponseType>(api: ApiDefinition<RequestType, ResponseType>) => {
+//     return apiThunk<RequestType,ResponseType>("PUT","api/updateData")(api);
+// }
 // export const postData = <RequestType, ResponseType>() =>
 //     createAsyncThunk<void, ApiDefinition<RequestType, ResponseType>>(
 //         'api/postData',
@@ -90,13 +122,13 @@ export const updateData = <RequestType, ResponseType>(api: ApiDefinition<Request
 //         }
 //     );
 
-//
-// export const updateData = createAsyncThunk(
-//     'api/updateData',
-//     async <T>(params: { url: string; payload: T }) => {
-//         return callApi(params.url, 'PUT', params.payload);
-//     }
-// );
+
+export const updateData = createAsyncThunk(
+    'api/updateData',
+    async <T>(params: { url: string; payload: T }) => {
+        return callApi(params.url, 'PUT', params.payload);
+    }
+);
 
 export const deleteData = createAsyncThunk(
     'api/deleteData',
