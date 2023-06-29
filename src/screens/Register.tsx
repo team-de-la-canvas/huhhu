@@ -6,10 +6,12 @@ import {ViewHeadline} from "@mui/icons-material";
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../state/store";
 import { register } from "../state/authSlice";
+import {useSnackbar} from "notistack";
 
 export default function Register(){
     const dispatch:AppDispatch = useDispatch();
     const [username, setUserName] = useState("");
+    const {enqueueSnackbar, closeSnackbar} = useSnackbar();
     return(
         <SafeAreaView style={styles.outer}>
             <Box style={styles.container}>
@@ -18,8 +20,11 @@ export default function Register(){
                     <TextField id="outlined-basic" label="Username" variant="outlined" onChange={event =>{
                         setUserName(event.target.value);
                     }}/>
-                    <Button onClick={e=>{
-                        dispatch(register(username));
+                    <Button onClick={()=>{
+                        dispatch(register({
+                            args: {username},
+                            onFailure: enqueueSnackbar
+                        }));
                     }}>Register</Button>
                 </Stack>    
             </Box>
