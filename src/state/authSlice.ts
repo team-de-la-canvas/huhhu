@@ -6,7 +6,7 @@ import {FulfilledAction } from "@reduxjs/toolkit/dist/query/core/buildThunks";
 
 interface Identity {
     name: string;
-    code: string;
+    code: number;
     loggedIn: boolean;
 }
 
@@ -21,7 +21,7 @@ const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        setCode: (state, action: PayloadAction<string>) => {
+        setCode: (state, action: PayloadAction<number>) => {
             state.code = action.payload;
         },
         setName: (state, action: PayloadAction<string>) => {
@@ -57,7 +57,7 @@ export const register = (username: string) =>
         },
         successFunction: ({payload,dispatch})=> {
             const code = payload.clientCode;
-            dispatch(setCode(code.toString()));
+            dispatch(setCode(code));
             dispatch(setName(username));
             dispatch(login());
         },
