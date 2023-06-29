@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppThunk } from './store';
-import { fetchData, updateData, deleteData } from './apiSlice';
+import { getData, updateData, deleteData } from './apiSlice';
 
 interface User {
     id: string;
@@ -34,7 +34,7 @@ const userSlice = createSlice({
 export const { addUser,setUsers,deleteUser } = userSlice.actions;
 
 export const fetchUsers = (): AppThunk => async (dispatch) => {
-    const response = await dispatch(fetchData('http://localhost:3000/clients'));
+    const response = await dispatch(getData('http://localhost:3000/clients'));
     const users = response.payload;
     dispatch(setUsers(users));
 };
