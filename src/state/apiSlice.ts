@@ -38,7 +38,11 @@ export const getData = createAsyncThunk(
         return callApi(url, 'GET');
     }
 );
-
+export type ActionArgs<RequestArgs> = {
+    args: RequestArgs,
+    onFailure: (error:string) => void
+    onSuccess?: () => void
+}
 type SuccessCallbackArgs<ResponseType> = {
     payload: ResponseType
     dispatch: AppDispatch,
@@ -53,20 +57,20 @@ type CallbackFunction<Args> = (request:Args)=> void;
 type PostRequestArguments<RequestType,ResponseType> = {
     url: string,
     payload: RequestType,
-    successFunction: CallbackFunction<SuccessCallbackArgs<ResponseType>>,
-    failureFunction: CallbackFunction<FailureCallbackArgs<ResponseType>>,
+    success: CallbackFunction<SuccessCallbackArgs<ResponseType>>,
+    failure: CallbackFunction<FailureCallbackArgs<ResponseType>>,
 }
 export const postDataAssume = <RequestType,ResponseType>(request: PostRequestArguments<RequestType,ResponseType>) =>  async (dispatch,getState)=> {
     dispatch(postData({
         url: request.url,
         payload: request.payload,
     }))
-    .then(({payload})=> request.successFunction({
+    .then(({payload})=> request.success({
         payload,
         dispatch,
         getState
     }))
-    .catch((error)=> request.failureFunction({
+    .catch((error)=> request.failure({
         getState,
         dispatch,
         error
