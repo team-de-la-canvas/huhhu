@@ -11,7 +11,6 @@ const HuntingScreen = () => {
     const dispatch: AppDispatch = useDispatch();
     const myLocation = useSelector((state: RootState) => state.hunting.myLocation);
     useEffect(() => {
-        console.log("test");
         Geolocation.getCurrentPosition((locationText) => {
             dispatch(setMyLocation({
                 latitude: locationText.coords.latitude,
