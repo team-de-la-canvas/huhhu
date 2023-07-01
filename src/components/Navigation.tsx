@@ -9,6 +9,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ArrowIcon from '@mui/icons-material/ArrowUpward';
 import SpinningText from "./SpinningText";
+import HuntingScreen from "../screens/HuntingScreen";
 
 
 
@@ -21,8 +22,8 @@ export default function Navigation() {
             <Tab.Screen name="Settings" component={SettingsScreen} options={{tabBarIcon: ({size, focused, color})=> {
                     return <SettingsIcon/>
                 }}}/>
-            <Tab.Screen name="Home" component={HomeScreen} options={{tabBarIcon: ({size, focused, color})=> {
-                    return(<DeleteIcon style={{color: "red"}}></DeleteIcon>)
+            <Tab.Screen name="Home" component={HuntingScreen} options={{tabBarIcon: ({size, focused, color})=> {
+                    return(<ArrowIcon></ArrowIcon>)
             }}}/>
             <Tab.Screen name="Test" component={TestScreen}/>
         </Tab.Navigator>
