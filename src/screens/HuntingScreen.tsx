@@ -5,25 +5,61 @@ import {Style} from "@mui/icons-material";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../state/store";
 import Geolocation from "@react-native-community/geolocation";
-import {setMyLocation} from "../state/huntingSlice";
+import {match, pullLocation, pushLocation, setMyLocation} from "../state/huntingSlice";
+import SpinningText from "../components/SpinningText";
+import {Button} from "@mui/material";
+import Pointer from "../components/Pointer";
 
 const HuntingScreen = () => {
     const dispatch: AppDispatch = useDispatch();
     const myLocation = useSelector((state: RootState) => state.hunting.myLocation);
+    const otherLocation = useSelector((state: RootState) => state.hunting.otherLocation);
+    const huntingActive = useSelector((state:RootState) => state.hunting.huntingActive);
     useEffect(() => {
-        Geolocation.getCurrentPosition((locationText) => {
-            dispatch(setMyLocation({
-                latitude: locationText.coords.latitude,
-                longitude: locationText.coords.longitude,
-            }))
-        });
+        const locationSetterInterval = setInterval(() => {
+            Geolocation.getCurrentPosition((location) => {
+                dispatch(setMyLocation({
+                    latitude: location.coords.latitude,
+                    longitude: location.coords.longitude,
+                }))
+                dispatch(pushLocation({
+                    args:{},
+                    onFailure: console.error
+                }))
+                dispatch(pullLocation({
+                    args:{},
+                    onFailure: console.error
+                }))
+            });
+        }, 5000);
+        
+        return () => {
+            clearInterval(locationSetterInterval);
+        }
     }, []);
+    const HuntingActiveScenario = () => {
+        
+        return(
+            <Pointer myLocation={myLocation} otherLocation={otherLocation}/>
+        )
+    }
+
+    const SearchingActiveScenario = () => {
+        return(
+            <Box>
+                <Button onClick={()=>{
+                    dispatch(match({
+                        onFailure: console.error,
+                        args:{}
+                    }))
+                }}>Match now!</Button>
+            </Box>
+        )
+    }
 
     return (
-        <Box style={{
-            background: "grey"
-        }}>
-            <Text>myLocation</Text>
+        <Box>
+            {huntingActive?<HuntingActiveScenario/>:<SearchingActiveScenario/>}
         </Box>
     )
 }

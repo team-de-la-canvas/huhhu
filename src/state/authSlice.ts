@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppThunk } from './store';
-import {getData, updateData, deleteData, postData, postDataAssume, ActionArgs} from './apiSlice';
+import {getData, updateData, deleteData, postData, post, ActionArgs} from './apiSlice';
 import {RegistrationRequest, RegistrationResponse} from "../shared/routes";
 import {FulfilledAction } from "@reduxjs/toolkit/dist/query/core/buildThunks";
 
@@ -52,11 +52,11 @@ type RegisterRequest= {
     username: string
 }
 export const register = ({args,onFailure }:ActionArgs<RegisterRequest>) => 
-    postDataAssume<RegistrationRequest,RegistrationResponse>({
+    post<RegistrationRequest,RegistrationResponse>({
         url: "http://localhost:3000/reg",
-        payload: {
+        payload: () => ({
             clientName: args.username
-        },
+        }),
         success: ({payload,dispatch})=> {
             const code = payload.clientCode;
             dispatch(setCode(code));

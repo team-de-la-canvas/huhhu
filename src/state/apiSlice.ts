@@ -32,6 +32,17 @@ const callApi = async (
     }
 };
 
+
+type BareArgs = {
+    dispatch: AppDispatch,
+    getState: ()=> RootState
+}
+type BareFunctionCallback = (args: BareArgs) => void;
+export const bare =   (callback: BareFunctionCallback) => async (dispatch,getState) => callback({
+    dispatch,
+    getState
+})
+
 export const getData = createAsyncThunk(
     'api/getData',
     async (url: string) => {
@@ -48,22 +59,24 @@ type SuccessCallbackArgs<ResponseType> = {
     dispatch: AppDispatch,
     getState: ()=> RootState
 }
+type PayloadBuildingArgs = BareArgs;
 type FailureCallbackArgs<ResponseType> = {
     error: string
     dispatch: AppDispatch,
     getState: ()=> RootState
 }
 type CallbackFunction<Args> = (request:Args)=> void;
+type BuilderFunction<RequestArgs,ResponseArgs> = (request:RequestArgs)=> ResponseArgs;
 type PostRequestArguments<RequestType,ResponseType> = {
     url: string,
-    payload: RequestType,
+    payload: BuilderFunction<PayloadBuildingArgs,RequestType>,
     success: CallbackFunction<SuccessCallbackArgs<ResponseType>>,
     failure: CallbackFunction<FailureCallbackArgs<ResponseType>>,
 }
-export const postDataAssume = <RequestType,ResponseType>(request: PostRequestArguments<RequestType,ResponseType>) =>  async (dispatch,getState)=> {
+export const post = <RequestType,ResponseType>(request: PostRequestArguments<RequestType,ResponseType>) =>  async (dispatch, getState)=> {
     dispatch(postData({
         url: request.url,
-        payload: request.payload,
+        payload: request.payload({dispatch,getState}),
     }))
     .then(({payload})=> request.success({
         payload,
