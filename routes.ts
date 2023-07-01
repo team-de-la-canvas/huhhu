@@ -56,17 +56,17 @@ export interface GetLocationOfMatchRequest {
 
 
 export interface GetLocationOfMatchResponse {
-    location : LocationModel
+    clientLocation : LocationModel
     matchName : string;
 }
 
 
 export interface SetLocationRequest {
     clientCode: number,
-    location : LocationModel
+    clientLocation : LocationModel
 }
 
 
 export interface SetLocationResponse {
-    location : LocationModel
+    clientLocation : LocationModel
 }
