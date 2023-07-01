@@ -4,16 +4,13 @@ import {RootState, AppThunk, AppDispatch} from './store';
 import {RegistrationRequest, RegistrationResponse} from "../shared/routes";
 
 interface ApiState<T> {
+    requestType: string;
     data: T | null;
     loading: boolean;
     error: string | null;
 }
 
-const initialState: ApiState<any> = {
-    data: null,
-    loading: false,
-    error: null,
-};
+const initialState: ApiState<any>[] = [];
 
 const callApi = async (
     url: string,
@@ -72,11 +69,13 @@ type PostRequestArguments<RequestType,ResponseType> = {
     payload: BuilderFunction<PayloadBuildingArgs,RequestType>,
     success: CallbackFunction<SuccessCallbackArgs<ResponseType>>,
     failure: CallbackFunction<FailureCallbackArgs<ResponseType>>,
+    requestType: string
 }
 export const post = <RequestType,ResponseType>(request: PostRequestArguments<RequestType,ResponseType>) =>  async (dispatch, getState)=> {
     dispatch(postData({
         url: request.url,
         payload: request.payload({dispatch,getState}),
+        requestType: request.requestType
     }))
     .then(({payload})=> request.success({
         payload,
@@ -89,56 +88,12 @@ export const post = <RequestType,ResponseType>(request: PostRequestArguments<Req
         error
     }));
 }
-export const postData = createAsyncThunk(
+export const postData = createAsyncThunk<any, {url:string, payload:any,  requestType: string}>(
     'api/postData',
-    async <T>(params: { url: string; payload: T }) => {
+    async <T, AdditionalParam>(params: { url: string; payload: T, requestType:string }) => {
         return callApi(params.url, 'POST', params.payload);
     }
 );
-
-// export const postData = <RequestType, ResponseType>() =>
-//     createAsyncThunk<void, { url: string; payload: RequestType }>(
-//         'api/postData',
-//         async (params) => {
-//             return callApi<RequestType, ResponseType>(params.url, 'POST', params.payload);
-//         }
-//     );
-
-//
-//
-// type ApiDefinition<RequestType, ResponseType> = {
-//     url: string;
-//     payload: RequestType;
-// };
-// export const postData = <RequestType, ResponseType>(api: ApiDefinition<RequestType, ResponseType>): AsyncThunkAction<ResponseType, ApiDefinition<RequestType, ResponseType>, {}> => {
-//     return apiThunk<RequestType,ResponseType>("POST","api/postData")(api);
-// }
-
-//
-// export const apiThunk = <RequestType, ResponseType>(method: string,  reduxType: string) =>
-//     createAsyncThunk<ResponseType, ApiDefinition<RequestType, ResponseType>>(
-//         reduxType,
-//         async (api) => {
-//             return callApi<ResponseType,RequestType>(api.url, method, api.payload);
-//         }
-//     );
-//
-//
-// export const updateData = <RequestType, ResponseType>(api: ApiDefinition<RequestType, ResponseType>) => {
-//     return apiThunk<RequestType,ResponseType>("PUT","api/updateData")(api);
-// }
-// export const postData = <RequestType, ResponseType>() =>
-//     createAsyncThunk<void, ApiDefinition<RequestType, ResponseType>>(
-//         'api/postData',
-//         async (api, { rejectWithValue }) => {
-//             try {
-//                 return await callApi<RequestType, ResponseType>(api.url, 'POST', api.payload);
-//             } catch (error) {
-//                 return rejectWithValue(error.response?.data);
-//             }
-//         }
-//     );
-
 
 export const updateData = createAsyncThunk(
     'api/updateData',
@@ -160,54 +115,81 @@ const apiSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(getData.pending, (state) => {
-                state.loading = true;
-                state.error = null;
+            // .addCase(getData.pending, (state) => {
+            //     state.loading = true;
+            //     state.error = null;
+            // })
+            // .addCase(getData.fulfilled, (state, action) => {
+            //     state.loading = false;
+            //     state.data = action.payload;
+            // })
+            // .addCase(getData.rejected, (state, action) => {
+            //     state.loading = false;
+            //     state.error = action.error.message;
+            //     state.data = null;
+            // })
+            .addCase(postData.pending, (state, action) => {
+                const { requestType } = action.meta.arg; // Access additional parameter
+
+                // Find the corresponding OneApiState object and update its loading and error fields
+                const apiState = state.find((s) => s.requestType === requestType);
+                if (apiState) {
+                    apiState.loading = true;
+                    apiState.error = null;
+                    apiState.data = null
+                } else {
+                    state.push({
+                        requestType,
+                        loading: true,
+                        error: null,
+                        data: null
+                    })
+                }
             })
-            .addCase(getData.fulfilled, (state, action) => {
-                state.loading = false;
-                state.data = action.payload;
-            })
-            .addCase(getData.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.error.message;
-                state.data = null;
-            })
-            .addCase(postData.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(postData.fulfilled, (state,action) => {
-                state.loading = false;
-                state.data = action.payload;
+            .addCase(postData.fulfilled, (state, action) => {
+                const { requestType } = action.meta.arg; // Access additional parameter
+
+                // Find the corresponding OneApiState object and update its loading, error, and data fields
+                const apiState = state.find((s) => s.requestType === requestType);
+                if (apiState) {
+                    apiState.loading = false;
+                    apiState.error = null;
+                    apiState.data = action.payload;
+                }
             })
             .addCase(postData.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.error.message;
-                state.data = null;
+                const { requestType } = action.meta.arg; // Access additional parameter
+
+                // Find the corresponding OneApiState object and update its loading, error, and data fields
+                const apiState = state.find((s) => s.requestType === requestType);
+                if (apiState) {
+                    apiState.loading = false;
+                    apiState.error = action.error.message;
+                    apiState.data = null;
+                }
             })
-            .addCase(updateData.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(updateData.fulfilled, (state) => {
-                state.loading = false;
-            })
-            .addCase(updateData.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.error.message;
-            })
-            .addCase(deleteData.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(deleteData.fulfilled, (state) => {
-                state.loading = false;
-            })
-            .addCase(deleteData.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.error.message;
-            });
+            // .addCase(updateData.pending, (state) => {
+            //     state.loading = true;
+            //     state.error = null;
+            // })
+            // .addCase(updateData.fulfilled, (state) => {
+            //     state.loading = false;
+            // })
+            // .addCase(updateData.rejected, (state, action) => {
+            //     state.loading = false;
+            //     state.error = action.error.message;
+            // })
+            // .addCase(deleteData.pending, (state) => {
+            //     state.loading = true;
+            //     state.error = null;
+            // })
+            // .addCase(deleteData.fulfilled, (state) => {
+            //     state.loading = false;
+            // })
+            // .addCase(deleteData.rejected, (state, action) => {
+            //     state.loading = false;
+            //     state.error = action.error.message;
+            // });
     },
 });
 

@@ -46,6 +46,7 @@ const huntingSlice = createSlice({
 
 
 export const match = ({onFailure }:ActionArgs<{ }>) => post<MatchRequest,MatchResponse>({
+    requestType: match.name,
     url: "http://localhost:3000/match",
     payload: ({getState}) => {
         return {
@@ -62,6 +63,7 @@ export const match = ({onFailure }:ActionArgs<{ }>) => post<MatchRequest,MatchRe
 
 export const pushLocation = ({args,onFailure }:ActionArgs<{  }>) =>
     post<SetLocationRequest,SetLocationResponse>({
+        requestType: pushLocation.name,
         url: "http://localhost:3000/setLocation",
         payload: ({getState})=>({
             clientCode: getState().auth.code,
@@ -77,6 +79,7 @@ export const pushLocation = ({args,onFailure }:ActionArgs<{  }>) =>
 
 export const pullLocation = ({args,onFailure }:ActionArgs<{ }>) =>
     post<GetLocationOfMatchRequest,GetLocationOfMatchResponse>({
+        requestType: pullLocation.name,
         url: "http://localhost:3000/getLocationOfMatch",
         payload: ({getState})=>({
             clientCode: getState().auth.code,

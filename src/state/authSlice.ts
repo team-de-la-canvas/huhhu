@@ -53,6 +53,7 @@ type RegisterRequest= {
 }
 export const register = ({args,onFailure }:ActionArgs<RegisterRequest>) => 
     post<RegistrationRequest,RegistrationResponse>({
+        requestType: register.name,
         url: "http://localhost:3000/reg",
         payload: () => ({
             clientName: args.username
@@ -70,6 +71,7 @@ export const register = ({args,onFailure }:ActionArgs<RegisterRequest>) =>
 export const login = () : AppThunk => async (dispatch,getState)=> {
     const state = getState();
     dispatch(postData({
+        requestType: login.name,
         url: "http://localhost:3000/visible",
         payload: {
             clientName: state.auth.name,
