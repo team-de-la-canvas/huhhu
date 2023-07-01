@@ -51,7 +51,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 // Custom middleware to handle exceptions
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+app.use((err: Error, req: Request, res: Response) => {
     // Handle the error and send a response to the client
     res.status(500).json({ error: 'Internal Server Error' });
 });
