@@ -33,6 +33,7 @@ const huntingSlice = createSlice({
             state.myLocation = action.payload;
         },
         setOtherLocation(state,action: PayloadAction<LocationModel>){
+            console.log("try to set other location");
             state.otherLocation = action.payload;
         },
         activateHunting(state){
@@ -67,7 +68,7 @@ export const pushLocation = ({args,onFailure }:ActionArgs<{  }>) =>
         url: "http://localhost:3000/setLocation",
         payload: ({getState})=>({
             clientCode: getState().auth.code,
-            location: getState().hunting.myLocation
+            clientLocation: getState().hunting.myLocation
         })
         ,
         success: ({payload,dispatch})=> {
@@ -86,8 +87,8 @@ export const pullLocation = ({args,onFailure }:ActionArgs<{ }>) =>
         })
         ,
         success: ({payload,dispatch})=> {
-            console.log("get location: ",payload.location)
-            dispatch(setOtherLocation(payload.location))
+            console.log("got package otherLocation: ",payload)
+            dispatch(setOtherLocation(payload.clientLocation))
         },
         failure: (error) => onFailure(error.error)
     })
