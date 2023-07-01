@@ -192,7 +192,9 @@ app.post("/setLocation", (req: Request<SetLocationRequest>, res: Response<SetLoc
 app.post("/getLocationOfMatch", (req, res) => {
     const clientCode = req.body.clientCode;
     const thisClient = clients.find(cl => cl.authenticated && cl.code === clientCode);
+    console.log("this client: ",thisClient)
     const otherClient = clients.find(cl => cl.authenticated && cl.activeMatchWith === thisClient.name);
+    console.log("other client: ",otherClient)
     res.handleResponse({
         payload: {
             clientLocation:otherClient.location
