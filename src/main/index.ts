@@ -51,9 +51,10 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 // Custom middleware to handle exceptions
-app.use((err: Error, req: Request, res: Response) => {
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     // Handle the error and send a response to the client
     res.status(500).json({ error: 'Internal Server Error' });
+    next();
 });
 
 
@@ -182,7 +183,7 @@ app.post("/setLocation", (req: Request<SetLocationRequest>, res: Response<SetLoc
     thisClient.location = req.body.clientLocation;
     res.handleResponse({
         payload: {
-            location: req.body.clientLocation
+            clientLocation: req.body.clientLocation
         },
         statusCode: 200
     });
