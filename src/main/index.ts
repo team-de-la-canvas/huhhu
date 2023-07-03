@@ -212,6 +212,6 @@ app.post("/debugSetState", (req : Request<Client[]>, res : Response<Client[]>) =
     })
 });
 
-app.listen(port, () => {
-    console.log(`App listening at http://localhost:${port}`);
+app.listen(port, '0.0.0.0', () => {
+    console.log(`App listening at http://0.0.0.0:${port}`);
 });

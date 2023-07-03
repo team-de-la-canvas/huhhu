@@ -12,14 +12,8 @@ services:
       - api
     networks:
       - app-network
-    environment:
-      - DOMAIN_NAME=${DOMAIN_NAME}
-      - API_HOST=api
-
   api:
-    build:
-      context: .
-      dockerfile: ../Dockerfile
+    image: huhhu-api
     ports:
       - 3000:3000
     networks:
