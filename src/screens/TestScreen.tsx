@@ -19,6 +19,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import SpinningText from "../components/SpinningText";
 import { Visibility } from "@mui/icons-material";
 import {Button, TextField, ToggleButton} from "@mui/material";
+import {apiUrl} from "../state/config";
 
 export default function TestScreen() {
      
@@ -35,13 +36,13 @@ export default function TestScreen() {
             console.log(result);
         });
 
-        axios.get("http://localhost:3000").then((result) => {
+        axios.get(apiUrl).then((result) => {
             console.log(result);
         });
-        axios.post("http://localhost:3000/login", {
+        axios.post(apiUrl+"/login", {
             clientName: "client " + Math.random(),
         });
-        axios.get("http://localhost:3000/clients").then((res) => {
+        axios.get(apiUrl+"/clients").then((res) => {
             console.log(res);
         });
     }, []);

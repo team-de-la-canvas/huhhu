@@ -3,6 +3,7 @@ import { AppThunk } from './store';
 import {getData, updateData, deleteData, postData, post, ActionArgs} from './apiSlice';
 import {RegistrationRequest, RegistrationResponse} from "../shared/routes";
 import {FulfilledAction } from "@reduxjs/toolkit/dist/query/core/buildThunks";
+import {apiUrl} from "./config";
 
 interface Identity {
     name: string;
@@ -35,26 +36,13 @@ const authSlice = createSlice({
 
 const { setCode,setName,setLogin } = authSlice.actions;
 
-
-// export const register = (username: string) : AppThunk => async (dispatch)=> {
-//     const response = await dispatch(postData<RegistrationRequest,RegistrationResponse>({
-//         url: "http://localhost:3000/reg",
-//         payload: {
-//             clientName: username
-//         }
-//     }))as  { payload: RegistrationResponse };
-//     const code = response.payload.clientCode;
-//     dispatch(setCode(code.toString()));
-//     dispatch(setName(username));
-//     dispatch(login());
-// }
 type RegisterRequest= {
     username: string
 }
 export const register = ({args,onFailure }:ActionArgs<RegisterRequest>) => 
     post<RegistrationRequest,RegistrationResponse>({
         requestType: register.name,
-        url: "http://localhost:3000/reg",
+        url: apiUrl+"/reg",
         payload: () => ({
             clientName: args.username
         }),
@@ -72,7 +60,7 @@ export const login = () : AppThunk => async (dispatch,getState)=> {
     const state = getState();
     dispatch(postData({
         requestType: login.name,
-        url: "http://localhost:3000/visible",
+        url: apiUrl+"/visible",
         payload: {
             clientName: state.auth.name,
             clientCode: state.auth.code,

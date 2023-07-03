@@ -9,6 +9,7 @@ import {
 } from "../shared/routes";
 import {login} from "./authSlice";
 import {LocationModel} from "../shared/models";
+import {apiUrl} from "./config";
 
 interface HuntingState {
     myLocation: LocationModel;
@@ -48,7 +49,7 @@ const huntingSlice = createSlice({
 
 export const match = ({onFailure }:ActionArgs<{ }>) => post<MatchRequest,MatchResponse>({
     requestType: match.name,
-    url: "http://localhost:3000/match",
+    url: apiUrl+"/match",
     payload: ({getState}) => {
         return {
             clientCode: getState().auth.code
@@ -65,7 +66,7 @@ export const match = ({onFailure }:ActionArgs<{ }>) => post<MatchRequest,MatchRe
 export const pushLocation = ({args,onFailure }:ActionArgs<{  }>) =>
     post<SetLocationRequest,SetLocationResponse>({
         requestType: pushLocation.name,
-        url: "http://localhost:3000/setLocation",
+        url: apiUrl+"/setLocation",
         payload: ({getState})=>({
             clientCode: getState().auth.code,
             clientLocation: getState().hunting.myLocation
@@ -81,7 +82,7 @@ export const pushLocation = ({args,onFailure }:ActionArgs<{  }>) =>
 export const pullLocation = ({args,onFailure }:ActionArgs<{ }>) =>
     post<GetLocationOfMatchRequest,GetLocationOfMatchResponse>({
         requestType: pullLocation.name,
-        url: "http://localhost:3000/getLocationOfMatch",
+        url: apiUrl+"/getLocationOfMatch",
         payload: ({getState})=>({
             clientCode: getState().auth.code,
         })
