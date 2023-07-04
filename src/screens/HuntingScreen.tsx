@@ -6,6 +6,7 @@ import Pointer from "../components/Pointer";
 import * as Location from 'expo-location';
 import {View} from "react-native";
 import {Button} from "react-native-paper";
+import {flashError, flashSuccess} from "../services/flasher";
 
 const HuntingScreen = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -23,13 +24,13 @@ const HuntingScreen = () => {
                 }))
                 dispatch(pushLocation({
                     args:{},
-                    onFailure: console.error
+                    onFailure: flashError
                 }))
                 if (huntingActive)
                 {
                     dispatch(pullLocation({
                         args:{},
-                        onFailure: console.error
+                        onFailure: flashError
                     }))   
                 }
             })
@@ -42,7 +43,7 @@ const HuntingScreen = () => {
         (async () => {
             let { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
-                console.error('Permission to access location was denied');
+                flashError('Permission to access location was denied');
                 return;
             }else {
                 const locationSetterInterval = setInterval(getLocation, 5000);
@@ -65,7 +66,7 @@ const HuntingScreen = () => {
             <View>
                 <Button onPress={()=>{
                     dispatch(match({
-                        onFailure: console.error,
+                        onFailure: flashError,
                         args:{}
                     }))
                 }}>Match now!</Button>
