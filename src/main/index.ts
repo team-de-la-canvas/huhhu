@@ -10,6 +10,8 @@ import {
     RegistrationResponse, SetLocationRequest, SetLocationResponse
 } from "../shared/routes";
 import {Client} from "../shared/models";
+import { v4 as uuid } from "uuid"
+import {randomUUID} from "crypto";
 
 
 const app = express();
@@ -128,6 +130,14 @@ app.post("/match", (req: Request<MatchRequest>, res: Response<MatchResponse>) =>
         thisClient.activeMatchWith = otherClient.name;
         otherClient.activeMatchWith = thisClient.name;
         
+        otherClient.piggyBack = {
+            id: randomUUID(),
+            type: "matchStarted",
+            payload: {
+                matchName: thisClient.name
+            }
+        }
+        
         res.handleResponse({
             payload: {
                 matchName: otherClient.name,
@@ -158,16 +168,8 @@ app.get("/clients", (req: Request<ClientsRequest>, res:Response<ClientsResponse>
 });
 
 app.get("/matches", (req: Request<MatchesRequest>,res:Response<MatchesResponse>) => {
-    const matches = clients.reduce((result:string[][], item) => {
-        if (item.activeMatchWith) {
-            // Überprüfe, ob das Paar schon im result-Array existiert
-            if (!result.some(pair => pair.includes(item.name) && pair.includes(item.activeMatchWith))) {
-                // Wenn nicht, fuege das Paar hinzu
-                result.push([item.name, item.activeMatchWith].sort());
-            }
-        }
-        return result;
-    }, [])
+    const matches = clients.reduce(matchesGrouping, [])
+    
     res.handleResponse({
         payload: {
             matches: matches
@@ -180,10 +182,10 @@ app.get("/matches", (req: Request<MatchesRequest>,res:Response<MatchesResponse>)
 app.post("/setLocation", (req: Request<SetLocationRequest>, res: Response<SetLocationResponse>) => { 
     const clientCode = req.body.clientCode;
     const thisClient = clients.find(cl => cl.authenticated && cl.code === clientCode);
-    thisClient.location = req.body.clientLocation;
     res.handleResponse({
         payload: {
-            clientLocation: req.body.clientLocation
+            clientLocation: req.body.clientLocation,
+            piggyBack: thisClient.piggyBack
         },
         statusCode: 200
     });
