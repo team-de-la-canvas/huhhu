@@ -1,10 +1,9 @@
 import React, {useState} from "react";
-import {Button, Stack, TextField} from "@mui/material";
-import {SafeAreaView, StyleSheet, Text} from "react-native";
-import Box from "@mui/material/Box";
+import {SafeAreaView, StyleSheet, Text, View} from "react-native";
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../state/store";
 import { register } from "../state/authSlice";
+import {Button, TextInput} from "react-native-paper";
 // import {useSnackbar} from "notistack";
 
 export default function Register(){
@@ -12,22 +11,22 @@ export default function Register(){
     const [username, setUserName] = useState("");
     // const {enqueueSnackbar, closeSnackbar} = useSnackbar();
     return(
-        <SafeAreaView style={styles.outer}>
-            <Box style={styles.container}>
+        <View style={styles.outer}>
+            <View style={styles.container}>
                 <Text style={styles.title}>Register</Text>
-                <Stack style={styles.stack}>
-                    <TextField id="outlined-basic" label="Username" variant="outlined" onChange={event =>{
-                        setUserName(event.target.value);
+                <View style={styles.stack}>
+                    <TextInput id="outlined-basic" label="Username" mode="outlined" onChangeText={text =>{
+                        setUserName(text);
                     }}/>
-                    <Button onClick={()=>{
+                    <Button mode={"contained"} onPress={()=>{
                         dispatch(register({
                             args: {username},
                             onFailure: console.error
                         }));
                     }}>Register</Button>
-                </Stack>    
-            </Box>
-        </SafeAreaView>
+                </View>    
+            </View>
+        </View>
     )
 }
 
@@ -49,7 +48,9 @@ const styles = StyleSheet.create({
     },
     stack: {
         marginTop: 50,
-        justifyContent: "space-between",
-        height: 200
+        height: 200,
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 });

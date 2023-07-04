@@ -1,11 +1,11 @@
 import React, {useEffect} from "react";
-import Box from "@mui/material/Box";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../state/store";
 import {match, pullLocation, pushLocation, setMyLocation} from "../state/huntingSlice";
-import {Button} from "@mui/material";
 import Pointer from "../components/Pointer";
 import * as Location from 'expo-location';
+import {View} from "react-native";
+import {Button} from "react-native-paper";
 
 const HuntingScreen = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -62,21 +62,21 @@ const HuntingScreen = () => {
 
     const SearchingActiveScenario = () => {
         return(
-            <Box>
-                <Button onClick={()=>{
+            <View>
+                <Button onPress={()=>{
                     dispatch(match({
                         onFailure: console.error,
                         args:{}
                     }))
                 }}>Match now!</Button>
-            </Box>
+            </View>
         )
     }
 
     return (
-        <Box>
+        <View>
             {huntingActive?<HuntingActiveScenario/>:<SearchingActiveScenario/>}
-        </Box>
+        </View>
     )
 }
 
