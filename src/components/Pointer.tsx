@@ -1,8 +1,7 @@
 import React, {useRef, useEffect, useState} from 'react';
 import {Animated, Easing, StyleSheet, Text} from 'react-native';
 import { LocationModel } from "../shared/models";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faArrowUp } from "@fortawesome/free-solid-svg-icons";
+import {IconButton} from "react-native-paper";
 
 
 type PointerArgs = {
@@ -46,7 +45,7 @@ const Pointer = ({ myLocation, otherLocation }: PointerArgs) => {
 
     const Animation = () => 
         <Animated.Text style={[styles.textStyle, transformStyle]}>
-            <FontAwesomeIcon icon={faArrowUp}></FontAwesomeIcon>
+            <IconButton icon={"arrow-up"}></IconButton>
         </Animated.Text>
     
     return (

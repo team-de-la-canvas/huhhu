@@ -3,10 +3,9 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Text, View } from "react-native";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGear, faArrowUp } from "@fortawesome/free-solid-svg-icons";
 import Register from "../screens/Register";
 import HuntingScreen from "../screens/HuntingScreen";
+import {IconButton} from "react-native-paper";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -20,16 +19,16 @@ export default function Navigation() {
                     component={SettingsStack}
                     options={{
                         tabBarIcon: ({ size, focused, color }) => (
-                            <FontAwesomeIcon icon={faGear} />
+                            <IconButton icon={"cog"} />
                         ),
                     }}
                 />
                 <Tab.Screen
-                    name="Home"
+                    name="Hunting"
                     component={HuntingScreen}
                     options={{
                         tabBarIcon: ({ size, focused, color }) => (
-                            <FontAwesomeIcon icon={faArrowUp} />
+                            <IconButton icon={"arrow-up"} />
                         ),
                     }}
                 />
