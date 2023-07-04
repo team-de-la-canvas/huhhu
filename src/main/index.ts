@@ -167,6 +167,17 @@ app.get("/clients", (req: Request<ClientsRequest>, res:Response<ClientsResponse>
     });
 });
 
+const matchesGrouping = (result:string[][], item) => {
+    if (item.activeMatchWith) {
+        // Überprüfe, ob das Paar schon im result-Array existiert
+        if (!result.some(pair => pair.includes(item.name) && pair.includes(item.activeMatchWith))) {
+            // Wenn nicht, fuege das Paar hinzu
+            result.push([item.name, item.activeMatchWith].sort());
+        }
+    }
+    return result;
+}
+
 app.get("/matches", (req: Request<MatchesRequest>,res:Response<MatchesResponse>) => {
     const matches = clients.reduce(matchesGrouping, [])
     
