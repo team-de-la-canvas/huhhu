@@ -1,3 +1,5 @@
+import {MatchResponse} from "./routes";
+
 export interface Client{
     name : string,
     code: number,
@@ -10,4 +12,16 @@ export interface Client{
 export interface LocationModel{
     latitude: number,
     longitude: number, 
+}
+
+export interface ResponsePiggyBag {
+    type: "matchStarted" | "matchCanceled"
+    payload: MatchStartedPiggyBagPayload | MatchCanceledPiggyBagPayload
+}
+
+export type MatchStartedPiggyBagPayload = MatchResponse
+
+// placeholder
+export interface MatchCanceledPiggyBagPayload {
+
 }

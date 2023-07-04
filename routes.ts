@@ -1,4 +1,8 @@
-import {LocationModel} from "./models";
+import {ResponsePiggyBag, LocationModel} from "./models";
+
+export interface PiggyPackingResponse {
+    piggyBack: ResponsePiggyBag
+}
 
 export interface RegistrationRequest {
     clientName: string;
@@ -67,6 +71,6 @@ export interface SetLocationRequest {
 }
 
 
-export interface SetLocationResponse {
+export interface SetLocationResponse extends PiggyPackingResponse {
     clientLocation : LocationModel
 }
