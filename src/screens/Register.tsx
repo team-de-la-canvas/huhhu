@@ -2,16 +2,15 @@ import React, {useState} from "react";
 import {Button, Stack, TextField} from "@mui/material";
 import {SafeAreaView, StyleSheet, Text} from "react-native";
 import Box from "@mui/material/Box";
-import {ViewHeadline} from "@mui/icons-material";
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../state/store";
 import { register } from "../state/authSlice";
-import {useSnackbar} from "notistack";
+// import {useSnackbar} from "notistack";
 
 export default function Register(){
     const dispatch:AppDispatch = useDispatch();
     const [username, setUserName] = useState("");
-    const {enqueueSnackbar, closeSnackbar} = useSnackbar();
+    // const {enqueueSnackbar, closeSnackbar} = useSnackbar();
     return(
         <SafeAreaView style={styles.outer}>
             <Box style={styles.container}>
@@ -23,7 +22,7 @@ export default function Register(){
                     <Button onClick={()=>{
                         dispatch(register({
                             args: {username},
-                            onFailure: enqueueSnackbar
+                            onFailure: console.error
                         }));
                     }}>Register</Button>
                 </Stack>    

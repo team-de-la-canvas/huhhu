@@ -10,6 +10,14 @@
     },
     "ios": {
       "bundleIdentifier": "app.huhhu"
-    }
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow app.huhhu to use your location."
+        }
+      ]
+    ]
   }
 }
