@@ -1,11 +1,13 @@
 import {MatchResponse} from "./routes";
+import {v4 as uuid} from "uuid";
 
 export interface Client{
     name : string,
     code: number,
     authenticated?: boolean,
     activeMatchWith?: string,
-    location: LocationModel | undefined
+    location: LocationModel | undefined,
+    piggyBack?: ResponsePiggyBag
 }
 
 
@@ -16,6 +18,7 @@ export interface LocationModel{
 
 export interface ResponsePiggyBag {
     type: "matchStarted" | "matchCanceled"
+    id: uuid
     payload: MatchStartedPiggyBagPayload | MatchCanceledPiggyBagPayload
 }
 
