@@ -1,52 +1,57 @@
 import React from "react";
-import {NavigationContainer} from "@react-navigation/native";
-import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
-import TestScreen from "../screens/TestScreen";
-import {Text, View} from "react-native";
-import TabBarIcon from "@react-navigation/bottom-tabs/lib/typescript/src/views/TabBarIcon";
-import {Icon, Stack} from "@mui/material";
-import DeleteIcon from '@mui/icons-material/Delete';
-import SettingsIcon from '@mui/icons-material/Settings';
-import ArrowIcon from '@mui/icons-material/ArrowUpward';
-import SpinningText from "./SpinningText";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createStackNavigator } from "@react-navigation/stack";
+import { Text, View } from "react-native";
+import Register from "../screens/Register";
 import HuntingScreen from "../screens/HuntingScreen";
-
-
+import {IconButton} from "react-native-paper";
 
 const Tab = createBottomTabNavigator();
-
+const Stack = createStackNavigator();
 
 export default function Navigation() {
-    return <NavigationContainer>
-        <Tab.Navigator  initialRouteName={"Home"}>
-            <Tab.Screen name="Settings" component={SettingsScreen} options={{tabBarIcon: ({size, focused, color})=> {
-                    return <SettingsIcon/>
-                }}}/>
-            <Tab.Screen name="Home" component={HuntingScreen} options={{tabBarIcon: ({size, focused, color})=> {
-                    return(<ArrowIcon></ArrowIcon>)
-            }}}/>
-            <Tab.Screen name="Test" component={TestScreen}/>
-        </Tab.Navigator>
-    </NavigationContainer>;
-}
-
-
-function HomeScreen() {
     return (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <Text>Home Screen</Text>
-            <Stack>
-                <SpinningText>
-                    <ArrowIcon></ArrowIcon>
-                </SpinningText>
-            </Stack>
-        </View>
+        <NavigationContainer>
+            <Tab.Navigator initialRouteName="Home">
+                <Tab.Screen
+                    name="SettingsStack"
+                    component={SettingsStack}
+                    options={{
+                        tabBarIcon: ({ size, focused, color }) => (
+                            <IconButton icon={"cog"} />
+                        ),
+                    }}
+                />
+                <Tab.Screen
+                    name="Hunting"
+                    component={HuntingScreen}
+                    options={{
+                        tabBarIcon: ({ size, focused, color }) => (
+                            <IconButton icon={"arrow-up"} />
+                        ),
+                    }}
+                />
+            </Tab.Navigator>
+        </NavigationContainer>
     );
 }
+
+function SettingsStack() {
+    return (
+        <Stack.Navigator>
+            <Stack.Screen name="Settings" component={SettingsScreen} />
+            <Stack.Screen name="Register" component={Register} />
+        </Stack.Navigator>
+    );
+}
+
 function SettingsScreen() {
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <Text>Home Screen</Text>
+            <Text>Settings Screen</Text>
         </View>
     );
 }
+
+// Rest of your code for Register screen
