@@ -1,56 +1,53 @@
-import React, {useState} from "react";
-import {Button, Stack, TextField} from "@mui/material";
-import {SafeAreaView, StyleSheet, Text} from "react-native";
-import Box from "@mui/material/Box";
-import {ViewHeadline} from "@mui/icons-material";
+import React, {useEffect, useState} from "react";
+import {SafeAreaView, StyleSheet, Text, View} from "react-native";
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../state/store";
 import { register } from "../state/authSlice";
-import {useSnackbar} from "notistack";
+import {Button, Card, TextInput} from "react-native-paper";
+import {flashError} from "../services/flasher";
+// import {useSnackbar} from "notistack";
 
 export default function Register(){
     const dispatch:AppDispatch = useDispatch();
     const [username, setUserName] = useState("");
-    const {enqueueSnackbar, closeSnackbar} = useSnackbar();
+    // const {enqueueSnackbar, closeSnackbar} = useSnackbar();
+    useEffect(()=>{
+        flashError("test")
+    },[]);
     return(
-        <SafeAreaView style={styles.outer}>
-            <Box style={styles.container}>
-                <Text style={styles.title}>Register</Text>
-                <Stack style={styles.stack}>
-                    <TextField id="outlined-basic" label="Username" variant="outlined" onChange={event =>{
-                        setUserName(event.target.value);
+        <View style={styles.container}>
+            <Card style={styles.card}>
+                <Card.Title title="Register & Login" />
+                <Card.Content>
+                    <TextInput style={styles.input} id="outlined-basic" label="Username" mode="outlined" onChangeText={text =>{
+                        setUserName(text);
                     }}/>
-                    <Button onClick={()=>{
+                    <Button mode={"contained"} style={styles.button} onPress={()=>{
                         dispatch(register({
                             args: {username},
-                            onFailure: enqueueSnackbar
+                            onFailure: flashError
                         }));
                     }}>Register</Button>
-                </Stack>    
-            </Box>
-        </SafeAreaView>
+                </Card.Content>
+            </Card>
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
-    outer: {
-        flex: 1
-    },
     container: {
-        alignSelf: "center",
-        backgroundColor: "grey",
-        padding: 50,
         flex: 1,
-        marginBottom: 250,
-        marginTop: 250
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-    title: {
-        alignSelf: "center",
-        fontSize: 50
+    card: {
+        width: '80%',
+        padding: 16,
     },
-    stack: {
-        marginTop: 50,
-        justifyContent: "space-between",
-        height: 200
-    }
+    button: {
+        marginTop: 16,
+    },
+    input: {
+        marginBottom: 16,
+    },
 });
