@@ -7,10 +7,12 @@ module.exports = {
         }
     },
     android: {
-        package: "app.huhhu"
+        package: "app.huhhu",
+        buildNumber: "1.0.1"
     },
     ios: {
-        bundleIdentifier: "app.huhhu"
+        bundleIdentifier: "app.huhhu",
+        versionCode: 2
     },
     plugins: [
         [
