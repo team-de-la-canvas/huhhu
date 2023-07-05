@@ -10,17 +10,20 @@ import {
 import {login} from "./authSlice";
 import {LocationModel} from "../shared/models";
 import {apiUrl} from "./config";
+import piggyBackingResolver from "../services/piggyBackingResolver";
 
 interface HuntingState {
     myLocation: LocationModel;
     otherLocation: LocationModel,
-    huntingActive: boolean
+    huntingActive: boolean,
+    matchName: string |undefined
 }
 
 const initialState: HuntingState = {
     myLocation: null,
     otherLocation: null,
     huntingActive: false,
+    matchName: undefined
 };
 
 const huntingSlice = createSlice({
@@ -42,6 +45,9 @@ const huntingSlice = createSlice({
         },
         deactivateHunting(state){
             state.huntingActive = false
+        },
+        setMatch(state, action: PayloadAction<string>){
+            state.matchName = action.payload
         }
     },
 });
@@ -70,10 +76,9 @@ export const pushLocation = ({args,onFailure }:ActionArgs<{  }>) =>
         payload: ({getState})=>({
             clientCode: getState().auth.code,
             clientLocation: getState().hunting.myLocation
-        })
-        ,
+        }),
         success: ({payload,dispatch})=> {
-            
+            piggyBackingResolver(payload.piggyBack,dispatch);
         },
         failure: (error) => onFailure(error.error)
     })
@@ -85,8 +90,7 @@ export const pullLocation = ({args,onFailure }:ActionArgs<{ }>) =>
         url: apiUrl+"/getLocationOfMatch",
         payload: ({getState})=>({
             clientCode: getState().auth.code,
-        })
-        ,
+        }),
         success: ({payload,dispatch})=> {
             console.log("got package otherLocation: ",payload)
             dispatch(setOtherLocation(payload.clientLocation))
@@ -94,6 +98,6 @@ export const pullLocation = ({args,onFailure }:ActionArgs<{ }>) =>
         failure: (error) => onFailure(error.error)
     })
 
-export const { setMyLocation,setOtherLocation,activateHunting,deactivateHunting } = huntingSlice.actions;
+export const { setMyLocation,setOtherLocation,activateHunting,deactivateHunting , setMatch} = huntingSlice.actions;
 
 export default huntingSlice.reducer;
