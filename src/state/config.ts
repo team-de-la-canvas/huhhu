@@ -1,1 +1,2 @@
-export const apiUrl = 'http://localhost:3000'
+import Constants from 'expo-constants';
+export const apiUrl = Constants.expoConfig.extra.api_url
