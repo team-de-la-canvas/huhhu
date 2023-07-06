@@ -34,7 +34,6 @@
     "start": "expo start --tunnel",
     "local": "cross-env API_URL=http://localhost:3000 expo start --lan"
   },
-  "version": "1.0.0",
   "private": true,
   "name": "huhhu-hunting-proto-expots"
 }
