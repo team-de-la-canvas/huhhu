@@ -53,7 +53,7 @@ const huntingSlice = createSlice({
 });
 
 
-export const match = ({onFailure }:ActionArgs<{ }>) => post<MatchRequest,MatchResponse>({
+export const match = ({onFailure, onSuccess }:ActionArgs<{ }>) => post<MatchRequest,MatchResponse>({
     requestType: match.name,
     url: apiUrl+"/match",
     payload: ({getState}) => {
@@ -62,6 +62,7 @@ export const match = ({onFailure }:ActionArgs<{ }>) => post<MatchRequest,MatchRe
         }
     },
     success: ({payload,dispatch}) => {
+        onSuccess();
         dispatch(activateHunting())
         console.log("matched with: ",payload.matchName)
     },

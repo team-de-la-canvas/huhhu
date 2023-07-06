@@ -68,6 +68,7 @@ const HuntingScreen = () => {
                 <Button title={"Match now!"} onPress={()=>{
                     dispatch(match({
                         onFailure: flashError,
+                        onSuccess: () => flashSuccess("Successfully Matched!"),
                         args:{}
                     }))
                 }} />

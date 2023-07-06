@@ -39,7 +39,7 @@ const { setCode,setName,setLogin } = authSlice.actions;
 type RegisterRequest= {
     username: string
 }
-export const register = ({args,onFailure }:ActionArgs<RegisterRequest>) => 
+export const register = ({args,onFailure, onSuccess }:ActionArgs<RegisterRequest>) => 
     post<RegistrationRequest,RegistrationResponse>({
         requestType: register.name,
         url: apiUrl+"/reg",
@@ -51,6 +51,7 @@ export const register = ({args,onFailure }:ActionArgs<RegisterRequest>) =>
             dispatch(setCode(code));
             dispatch(setName(args.username));
             dispatch(login());
+            onSuccess();
         },
         failure: (error) => onFailure(error.error)
     })
