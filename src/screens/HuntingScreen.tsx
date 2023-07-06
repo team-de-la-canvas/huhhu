@@ -4,8 +4,7 @@ import {AppDispatch, RootState} from "../state/store";
 import {match, pullLocation, pushLocation, setMyLocation} from "../state/huntingSlice";
 import Pointer from "../components/Pointer";
 import * as Location from 'expo-location';
-import {View} from "react-native";
-import {Button} from "react-native-paper";
+import {Button, View} from "react-native";
 import {flashError, flashSuccess} from "../services/flasher";
 
 const HuntingScreen = () => {
@@ -64,12 +63,12 @@ const HuntingScreen = () => {
     const SearchingActiveScenario = () => {
         return(
             <View>
-                <Button onPress={()=>{
+                <Button title={"Match now!"} onPress={()=>{
                     dispatch(match({
                         onFailure: flashError,
                         args:{}
                     }))
-                }}>Match now!</Button>
+                }} />
             </View>
         )
     }

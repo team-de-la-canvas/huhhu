@@ -2,10 +2,9 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
-import { Text, View } from "react-native";
+import { Text, View,Image} from "react-native";
 import Register from "../screens/Register";
 import HuntingScreen from "../screens/HuntingScreen";
-import {IconButton} from "react-native-paper";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -19,7 +18,7 @@ export default function Navigation() {
                     component={SettingsStack}
                     options={{
                         tabBarIcon: ({ size, focused, color }) => (
-                            <IconButton icon={"cog"} />
+                            <Image source={{ width: 30, height: 30, uri:"https://picsum.photos/30/30"}}/>
                         ),
                     }}
                 />
@@ -28,7 +27,7 @@ export default function Navigation() {
                     component={HuntingScreen}
                     options={{
                         tabBarIcon: ({ size, focused, color }) => (
-                            <IconButton icon={"arrow-up"} />
+                            <Image source={require('../../assets/arrow-up.png')} style={{ width: 30, height: 30 }}/>
                         ),
                     }}
                 />
