@@ -1,36 +1,129 @@
-# TypeScript Example
+# HuHHU
 
-<p>
-  <!-- iOS -->
-  <img alt="Supports Expo iOS" longdesc="Supports Expo iOS" src="https://img.shields.io/badge/iOS-4630EB.svg?style=flat-square&logo=APPLE&labelColor=999999&logoColor=fff" />
-  <!-- Android -->
-  <img alt="Supports Expo Android" longdesc="Supports Expo Android" src="https://img.shields.io/badge/Android-4630EB.svg?style=flat-square&logo=ANDROID&labelColor=A4C639&logoColor=fff" />
-  <!-- Web -->
-  <img alt="Supports Expo Web" longdesc="Supports Expo Web" src="https://img.shields.io/badge/web-4630EB.svg?style=flat-square&logo=GOOGLE-CHROME&labelColor=4285F4&logoColor=fff" />
-</p>
+## How async State Management works (generally):
+![Async Redux](docs/reduxasyncdataflowdiagram-fromReduxToolkit.gif)
 
-```sh
-npx create-react-native-app -t with-typescript
+## Our State Management is similar:
+```mermaid
+sequenceDiagram
+    UI ->> HuntingSlice: Dispatch Match({onFailure, onSucess})
+    HuntingSlice ->> ApiSlice: Dispatch Post Request ({match, url, onSuccess, onFailure})
+    ApiSlice ->> API: Http POST api/match {payload}
+    ApiSlice->>ApiSlice: pending
+    alt X time later: Failed
+        API->>ApiSlice: HTTP POST Response {error}
+        ApiSlice->>ApiSlice: api/post/rejected
+        ApiSlice->>HuntingSlice: onFailure(error)
+        opt
+            HuntingSlice->>HuntingSlice: handle error 
+        end
+        HuntingSlice->>UI: onFailure(error)
+    else X time later: Success
+        API->>ApiSlice: HTTP POST Response {payload}
+        ApiSlice->>ApiSlice: api/post/fulfilled
+        ApiSlice->>HuntingSlice: onSuccess(error)
+        opt
+            HuntingSlice->>HuntingSlice: handle success eg: dispatch(activateHunting())
+        end
+        HuntingSlice->>UI: onSuccess()
+    end
 ```
 
-TypeScript is a superset of JavaScript which gives you static types and powerful tooling in Visual Studio Code including autocompletion and useful inline warnings for type errors.
+### Async Thunk: (the thing beeing dispatched)
+`state/huntingSlice.ts`
+```typescript
+export const match = ({onFailure }:ActionArgs<{ }>) => post<MatchRequest,MatchResponse>({
+    requestType: match.name,
+    url: apiUrl+"/match",
+    payload: ({getState}) => {
+        return {
+            clientCode: getState().auth.code
+        }
+    },
+    success: ({payload,dispatch}) => {
+        dispatch(activateHunting())
+        console.log("matched with: ",payload.matchName)
+    },
+    failure: () => onFailure
+})
+```
 
-## 🚀 How to use
 
-#### Creating a new project
+### Reducer (the thing beeing combined with state):
+`state/huntingSlice.ts`
+```typescript
+const huntingSlice = createSlice({
+    name: 'hunting',
+    initialState,
+    reducers: {
+        activateHunting(state){
+            state.huntingActive = true
+        },
+    },
+});
+```
 
-- Install the CLI: `npm i -g expo-cli`
-- Create a project: `npx create-react-native-app -t with-typescript`
-- `cd` into the project
+### ApiSlice
+`state/apiSlice.ts`
+```typescript
+const apiSlice = createSlice({
+    name: 'api',
+    initialState,
+    reducers: {},
+    extraReducers: (builder) => {
+        builder
+            .addCase(postData.pending, (state, action) => {
+                //...
+            })
+            .addCase(postData.fulfilled, (state, action) => {
+                //...
+            })
+            .addCase(postData.rejected, (state, action) => {
+                //...
+            })
+    },
+});
+```
+Action Creator Wrapper
+```typescript
+export const post = <RequestType,ResponseType>(request: PostRequestArguments<RequestType,ResponseType>) =>  async (dispatch, getState)=> {
+    dispatch(postData(/*...*/))
+        .then(({payload})=> request.success(/*...*/))
+        .catch((error)=> request.failure(/*...*/));
+}
+```
 
-### Adding TypeScript to existing projects
+Action Creator (Api Action)
+```typescript
+export const postData = createAsyncThunk<any, {url:string, payload:any,  requestType: string}>(
+    'api/postData',
+    async <T, AdditionalParam>(params: { url: string; payload: T, requestType:string }) => {
+        return callApi(params.url, 'POST', params.payload);
+    }
+);
+```
 
-- Create a blank TypeScript config: `touch tsconfig.json`
-- Run `yarn start` or `npm run start` to automatically configure TypeScript
-- Rename files to TypeScript, `.tsx` for React components and `.ts` for plain typescript files
+### Store
+`state/store.ts`
+```typescript
+const store = configureStore({
+    reducer: {
+        user: userReducer,
+        hunting: huntingReducer,
+        auth: authReducer,
+        api: apiReducer
+    },
+});
+```
 
-> 💡 You can disable the TypeScript setup in Expo CLI with the environment variable `EXPO_NO_TYPESCRIPT_SETUP=1 expo start`
 
-## 📝 Notes
+### Dispatch (queue the action)
+`screens/HuntingScreen.tsx`
+```typescript
+const dispatch: AppDispatch = useDispatch();
+dispatch(match({
+    onFailure: flashError,
+    args:{}
+}))
+```
 
-- [Expo TypeScript guide](https://docs.expo.dev/versions/latest/guides/typescript/)
