@@ -1,20 +1,41 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../state/store";
 import {match, pullLocation, pushLocation, setMyLocation} from "../state/huntingSlice";
 import Pointer from "../components/Pointer";
 import * as Location from 'expo-location';
-import {Button, View} from "react-native";
-import {flashError, flashSuccess} from "../services/flasher";
+import {Button, StyleSheet, View} from "react-native";
+import {flashError, flashSuccess, flashWarning} from "../services/flasher";
 
 const HuntingScreen = () => {
     const dispatch: AppDispatch = useDispatch();
     const myLocation = useSelector((state: RootState) => state.hunting.myLocation);
     const otherLocation = useSelector((state: RootState) => state.hunting.otherLocation);
     const huntingActive = useSelector((state:RootState) => state.hunting.huntingActive);
+    const [updateCounter,setUpdateCounter] = useState(0);
     
-    const getLocation = async () => {
-        
+    useEffect(() => {
+        (async () => {
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                flashError('Permission to access location was denied');
+                return;
+            }else {
+                let current = 0;
+                const locationSetterInterval = setInterval(() => {
+                    current++;
+                    const newUpdateCounterValue= current;
+                    setUpdateCounter(newUpdateCounterValue);
+                }, 5000);
+
+                return () => {
+                    clearInterval(locationSetterInterval);
+                }
+            }
+        })();
+    }, []);
+    
+    useEffect(()=>{
         Location.getCurrentPositionAsync({})
             .then(location => {
                 dispatch(setMyLocation({
@@ -25,34 +46,17 @@ const HuntingScreen = () => {
                     args:{},
                     onFailure: flashError
                 }))
-                if (huntingActive)
-                {
-                    dispatch(pullLocation({
-                        args:{},
-                        onFailure: flashError
-                    }))   
-                }
             })
             .catch(error =>{
-                console.error(error)
+                flashError(error)
             });
-    }
-    
-    useEffect(() => {
-        (async () => {
-            let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
-                flashError('Permission to access location was denied');
-                return;
-            }else {
-                const locationSetterInterval = setInterval(getLocation, 5000);
-
-                return () => {
-                    clearInterval(locationSetterInterval);
-                }
-            }
-        })();
-    }, []);
+        if (huntingActive){
+            dispatch(pullLocation({
+                args:{},
+                onFailure: flashError
+            }))
+        }
+    },[updateCounter]);
     const HuntingActiveScenario = () => {
         
         return(
@@ -77,9 +81,9 @@ const HuntingScreen = () => {
     }
 
     return (
-        <View>
+        <>
             {huntingActive?<HuntingActiveScenario/>:<SearchingActiveScenario/>}
-        </View>
+        </>
     )
 }
 

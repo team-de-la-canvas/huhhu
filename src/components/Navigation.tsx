@@ -12,7 +12,7 @@ const Stack = createStackNavigator();
 export default function Navigation() {
     return (
         <NavigationContainer>
-            <Tab.Navigator initialRouteName="Home">
+            <Tab.Navigator initialRouteName="Hunting">
                 <Tab.Screen
                     name="SettingsStack"
                     component={SettingsStack}

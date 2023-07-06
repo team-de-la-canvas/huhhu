@@ -37,7 +37,6 @@ const huntingSlice = createSlice({
             state.myLocation = action.payload;
         },
         setOtherLocation(state,action: PayloadAction<LocationModel>){
-            console.log("try to set other location");
             state.otherLocation = action.payload;
         },
         activateHunting(state){
@@ -64,7 +63,6 @@ export const match = ({onFailure, onSuccess }:ActionArgs<{ }>) => post<MatchRequ
     success: ({payload,dispatch}) => {
         onSuccess();
         dispatch(activateHunting())
-        console.log("matched with: ",payload.matchName)
     },
     failure: () => onFailure
 })
@@ -93,7 +91,6 @@ export const pullLocation = ({args,onFailure }:ActionArgs<{ }>) =>
             clientCode: getState().auth.code,
         }),
         success: ({payload,dispatch})=> {
-            console.log("got package otherLocation: ",payload)
             dispatch(setOtherLocation(payload.clientLocation))
         },
         failure: (error) => onFailure(error.error)
