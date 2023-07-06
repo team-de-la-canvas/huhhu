@@ -8,9 +8,18 @@ const flash = (message:string, description: string,  type: MessageType) => {
         type,
     });
 }
-const flashError = (message:string, description?: string) => flash(message, description,"danger");
-const flashWarning = (message:string, description: string) => flash(message, description,"danger");
-const flashSuccess = (message:string, description: string) => flash(message, description,"success");
+const flashError = (message:string, description?: string) => {
+    console.error(message,description);
+    flash(message, description, "danger");
+}
+const flashWarning = (message:string, description?: string) => {
+    console.warn(message,description)
+    flash(message, description, "warning")
+};
+const flashSuccess = (message:string, description?: string) => {
+    console.log(message,description)
+    flash(message, description, "success")
+};
 
 
 
