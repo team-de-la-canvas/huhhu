@@ -1,8 +1,6 @@
 import React, {useRef, useEffect, useState} from 'react';
-import {Animated, Easing, StyleSheet, Text} from 'react-native';
+import {Animated, Easing, StyleSheet, Text,Image} from 'react-native';
 import { LocationModel } from "../shared/models";
-import {IconButton} from "react-native-paper";
-
 
 type PointerArgs = {
     myLocation: LocationModel,
@@ -45,7 +43,7 @@ const Pointer = ({ myLocation, otherLocation }: PointerArgs) => {
 
     const Animation = () => 
         <Animated.Text style={[styles.textStyle, transformStyle]}>
-            <IconButton icon={"arrow-up"}></IconButton>
+            <Image source={require('../../assets/arrow-up.png')} style={{ width: 30, height: 30 }}/>
         </Animated.Text>
     
     return (

@@ -1,9 +1,8 @@
 import React, {useEffect, useState} from "react";
-import {SafeAreaView, StyleSheet, Text, View} from "react-native";
+import {Button, SafeAreaView, StyleSheet, Text, TextInput, View} from "react-native";
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../state/store";
 import { register } from "../state/authSlice";
-import {Button, Card, TextInput} from "react-native-paper";
 import {flashError} from "../services/flasher";
 // import {useSnackbar} from "notistack";
 
@@ -16,20 +15,25 @@ export default function Register(){
     },[]);
     return(
         <View style={styles.container}>
-            <Card style={styles.card}>
-                <Card.Title title="Register & Login" />
-                <Card.Content>
-                    <TextInput style={styles.input} id="outlined-basic" label="Username" mode="outlined" onChangeText={text =>{
-                        setUserName(text);
-                    }}/>
-                    <Button mode={"contained"} style={styles.button} onPress={()=>{
+            <View style={styles.card}>
+                <Text>Register & Login</Text>
+                <View>
+                    <View style={styles.inputContainer}>
+                        <Text style={styles.inputLabel}>Username</Text>
+                        <TextInput
+                            style={styles.input}
+                            value={username}
+                            onChangeText={text => setUserName(text)}
+                        />
+                    </View>
+                    <Button onPress={()=>{
                         dispatch(register({
                             args: {username},
                             onFailure: flashError
                         }));
-                    }}>Register</Button>
-                </Card.Content>
-            </Card>
+                    }} title={"Register"}/>
+                </View>
+            </View>
         </View>
     )
 }
@@ -48,6 +52,19 @@ const styles = StyleSheet.create({
         marginTop: 16,
     },
     input: {
-        marginBottom: 16,
+        borderWidth: 1,
+        borderColor: 'gray',
+        borderRadius: 4,
+        padding: 8,
+        fontSize: 16,
+    },
+    inputContainer: {
+        flex: 1,
+        padding: 16,
+    },
+    inputLabel: {
+        marginBottom: 8,
+        fontSize: 16,
+        fontWeight: 'bold',
     },
 });

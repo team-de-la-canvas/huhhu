@@ -6,6 +6,8 @@ import {v4 as uuid} from "uuid"
 
 const fetchedBags: uuid = [];
 const resolvePiggyBacking = (piggyBag: ResponsePiggyBag, dispatch: AppDispatch) => {
+    if (!piggyBag)
+        return;
     //dont handle piggyBags twice
     if (uuid.contains(piggyBag.id))
         return;
