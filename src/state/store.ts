@@ -1,17 +1,31 @@
-import {configureStore, ThunkAction, Action, Dispatch} from '@reduxjs/toolkit';
+import {configureStore, ThunkAction, Action, Dispatch, combineReducers} from '@reduxjs/toolkit';
 import userReducer from './userSlice';
 import authReducer from './authSlice'
 import huntingReducer from './huntingSlice';
 import apiReducer from  './apiSlice'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { persistReducer, persistStore } from 'redux-persist';
+
+
+const persistConfig = {
+    key: 'root',
+    storage: AsyncStorage,
+};
+
+
+
+const persistedAuthReducer = persistReducer(persistConfig, authReducer);
 
 const store = configureStore({
     reducer: {
+        auth: persistedAuthReducer,
         user: userReducer,
         hunting: huntingReducer,
-        auth: authReducer,
-        api: apiReducer
-    },
+        api: apiReducer,
+    }
 });
+
+export const persistor = persistStore(store);
 
 export default store;
 
