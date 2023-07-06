@@ -43,7 +43,7 @@ const Pointer = ({ myLocation, otherLocation }: PointerArgs) => {
 
     const Animation = () => 
         <Animated.Text style={[styles.textStyle, transformStyle]}>
-            <Image source={require('../../assets/arrow-up.png')} style={{ width: 30, height: 30 }}/>
+            <Image source={require('../../assets/arrow-up.png')} style={{ width: 500, height: 500 }}/>
         </Animated.Text>
     
     return (

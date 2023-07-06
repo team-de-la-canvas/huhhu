@@ -56,7 +56,9 @@ const HuntingScreen = () => {
     const HuntingActiveScenario = () => {
         
         return(
-            <Pointer myLocation={myLocation} otherLocation={otherLocation}/>
+            <View style={styles.pointerScreen}>
+                <Pointer myLocation={myLocation} otherLocation={otherLocation}/>
+            </View>
         )
     }
 
@@ -79,5 +81,15 @@ const HuntingScreen = () => {
         </View>
     )
 }
+
+
+const styles = StyleSheet.create({
+    pointerScreen: {
+        flex: 1,
+        justifyContent: 'center',
+        // Add any other styles you want to apply
+    },
+});
+
 
 export default HuntingScreen;
