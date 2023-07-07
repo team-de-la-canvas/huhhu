@@ -12,7 +12,7 @@ interface ApiState<T> {
 
 const initialState: ApiState<any>[] = [];
 
-const callApi = async (
+export const callApi = async (
     url: string,
     method: string,
     payload?: any

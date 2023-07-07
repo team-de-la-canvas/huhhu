@@ -1,4 +1,4 @@
-import {configureStore, ThunkAction, Action, Dispatch, combineReducers} from '@reduxjs/toolkit';
+import {configureStore, ThunkAction, Action, Dispatch, combineReducers, getDefaultMiddleware} from '@reduxjs/toolkit';
 import userReducer from './userSlice';
 import authReducer from './authSlice'
 import huntingReducer from './huntingSlice';
@@ -7,14 +7,19 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { persistReducer, persistStore } from 'redux-persist';
 
 
-const persistConfig = {
+const persistAuthConfig = {
     key: 'root',
     storage: AsyncStorage,
+    // whitelist: ["name","code","visible","registered"]
 };
 
+const defaultMiddleware = getDefaultMiddleware({
+    serializableCheck: false, // turn off check for serializability
+});
 
 
-const persistedAuthReducer = persistReducer(persistConfig, authReducer);
+
+const persistedAuthReducer = persistReducer(persistAuthConfig, authReducer);
 
 const store = configureStore({
     reducer: {
@@ -22,7 +27,8 @@ const store = configureStore({
         user: userReducer,
         hunting: huntingReducer,
         api: apiReducer,
-    }
+    },
+    middleware: defaultMiddleware
 });
 
 export const persistor = persistStore(store);

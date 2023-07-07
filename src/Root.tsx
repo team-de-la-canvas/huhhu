@@ -6,10 +6,10 @@ import {persistor, RootState} from "./state/store";
 import {PersistGate} from "redux-persist/integration/react";
 
 export default function Root() {
-    const loggedIn = useSelector((state:RootState) => state.auth.loggedIn);
+    const registered = useSelector((state:RootState) => state.auth.registered);
     return (
         <PersistGate loading={null} persistor={persistor}>
-            {loggedIn ? <Main /> : <Register />}
+            {registered ? <Main /> : <Register />}
         </PersistGate>
     );
 }
