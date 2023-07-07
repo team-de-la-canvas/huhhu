@@ -1,12 +1,12 @@
-import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {AppDispatch, AppThunk, RootState} from './store';
-import {getData, updateData, deleteData, postData, post, ActionArgs, callApi} from './apiSlice';
-import {InvisibleRequest, InvisibleResponse, RegistrationRequest, RegistrationResponse} from "../shared/routes";
-import {FulfilledAction} from "@reduxjs/toolkit/dist/query/core/buildThunks";
-import {apiUrl} from "./config";
-import {useDispatch, useSelector} from "react-redux";
-import Register from "../screens/Register";
-import {useEffect, useState} from "react";
+import {createSlice} from '@reduxjs/toolkit';
+import {
+    InvisibleRequest,
+    InvisibleResponse,
+    RegistrationRequest,
+    RegistrationResponse,
+    VisibleRequest, VisibleResponse
+} from "../shared/routes";
+import {createPOSTApiAsyncThunk, createApiHook, createApiBuilder} from "./apiHelper";
 
 
 interface ApiState<Response> {
@@ -15,19 +15,12 @@ interface ApiState<Response> {
     error: string | null;
 }
 
-const initialApiState:ApiState<any> = {
-    data: null,
-    loading: false,
-    error: null
-};
-
 interface Identity {
     name: string | null;
     code: number | null;
     visible: boolean;
     registered: boolean;
-    registration: ApiState<RegistrationResponse>;
-    invisible: ApiState<InvisibleResponse>;
+    apiStates: { [path: string]: ApiState<any> }
 }
 
 const initialState: Identity = {
@@ -35,132 +28,37 @@ const initialState: Identity = {
     code: null,
     visible: false,
     registered: false,
-    registration: initialApiState,
-    invisible: initialApiState
+    apiStates: {}
 };
-type ThunkParams<Request> = { url: string; payload: Request }
 
 
-const register = createAsyncThunk<RegistrationResponse, ThunkParams<RegistrationRequest>, any>(
-    "register",
-    async (params: ThunkParams<RegistrationRequest>) => {
-        return callApi(params.url, 'POST', params.payload);
-    })
+const register = createPOSTApiAsyncThunk<RegistrationRequest,RegistrationResponse>("register");
+export const useRegister = createApiHook("/reg",register);
 
-type Callback = {
-    onFailure: (error: string) => void,
-    onSuccess: () => void
-}
-export const useRegister = (callback: Callback) => {
-    const dispatch:AppDispatch = useDispatch();
-    const status = useSelector((state: RootState) => state.auth.registration)
-    const [loadingGate,setLoadingGate] = useState(false); 
-    useEffect(() => {
-        if (status.loading)
-            setLoadingGate(true);
-        if (!loadingGate)
-            return;
-        if (status.error) {
-            callback.onFailure(status.error);
-        } else {
-            callback.onSuccess()
-        }
-    }, [status.loading, status.error, callback, dispatch]);
-    return (request: RegistrationRequest) => dispatch(register({
-        url: apiUrl+"/reg",
-        payload: request
-    }))
-}
+const invisible = createPOSTApiAsyncThunk<InvisibleRequest,InvisibleResponse>("invisible");
+export const useInvisible = createApiHook("/invisible",invisible);
 
-
-const invisible = createAsyncThunk<InvisibleRequest, ThunkParams<InvisibleRequest>, any>(
-    "invisible",
-    async (params: ThunkParams<InvisibleRequest>) => {
-        return callApi(params.url, 'POST', params.payload);
-    })
-export const useInvisible = (callback: Callback) => {
-    const dispatch:AppDispatch = useDispatch();
-    const status = useSelector((state: RootState) => state.auth.invisible)
-    useEffect(() => {
-        if (status.error) {
-            callback.onFailure(status.error);
-        } else {
-            callback.onSuccess()
-            dispatch(login())
-        }
-    }, [status.loading, status.error, callback, dispatch]);
-    return (request: InvisibleRequest) => dispatch(invisible({
-        url: apiUrl+"/inivsible",
-        payload: request
-    }))
-}
-
-export const login = (): AppThunk => async (dispatch, getState) => {
-    const state = getState();
-    dispatch(postData({
-        requestType: login.name,
-        url: apiUrl + "/visible",
-        payload: {
-            clientName: state.auth.name,
-            clientCode: state.auth.code,
-        }
-    }));
-    dispatch(setLogin());
-}
-
-
+const visible = createPOSTApiAsyncThunk<VisibleRequest,VisibleResponse>("visible");
+export const useVisible = createApiHook("/visible",visible);
 
 
 const authSlice = createSlice({
     name: 'auth',
     initialState,
-    reducers: {
-        setCode: (state, action: PayloadAction<number>) => {
-            state.code = action.payload;
-        },
-        setName: (state, action: PayloadAction<string>) => {
-            state.name = action.payload;
-        },
-        setLogin: (state) => {
-            state.visible = true;
-        },
-    },
+    reducers: {},
     extraReducers: (builder) => {
-        builder
-            .addCase(register.pending, (state, action) => {
-                state.registration.loading = true;
-            })
-            .addCase(register.fulfilled, (state, action) => {
-                state.registration.loading = false;
-                state.registration.error = null;
-                state.registration.data = action.payload;
-                
-                state.registered = true;
-            })
-            .addCase(register.rejected, (state, action) => {
-                state.registration.loading = false;
-                state.registration.error = action.error.message;
-            })
-
-            .addCase(invisible.pending, (state, action) => {
-                state.registration.loading = true;
-            })
-            .addCase(invisible.fulfilled, (state, action) => {
-                state.registration.loading = false;
-                state.registration.error = null;
-                state.registration.data = action.payload;
-
-                state.visible = false;
-            })
-            .addCase(invisible.rejected, (state, action) => {
-                state.registration.loading = false;
-                state.registration.error = action.error.message;
-            })
+        const apiBuilder = createApiBuilder(builder);
+        apiBuilder.addEndpoint(register,(state, action)=>{
+            state.registered = true;
+            state.code = action.payload.clientCode;
+        });
+        apiBuilder.addEndpoint(invisible,(state, action)=>{
+            state.visible = false;
+        });
+        apiBuilder.addEndpoint(visible, (state, action) => {
+            state.visible = true;
+        });
     }
 });
-
-const {setCode, setName, setLogin} = authSlice.actions;
-
-
 
 export default authSlice.reducer;

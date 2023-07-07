@@ -7,7 +7,6 @@ import {
     SetLocationRequest,
     SetLocationResponse
 } from "../shared/routes";
-import {login} from "./authSlice";
 import {LocationModel} from "../shared/models";
 import {apiUrl} from "./config";
 import piggyBackingResolver from "../services/piggyBackingResolver";
