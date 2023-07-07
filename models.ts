@@ -4,7 +4,7 @@ import {v4 as uuid} from "uuid";
 export interface Client{
     name : string,
     code: number,
-    authenticated?: boolean,
+    visible?: boolean,
     activeMatchWith?: string,
     location: LocationModel | undefined,
     piggyBack?: ResponsePiggyBag

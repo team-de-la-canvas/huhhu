@@ -12,13 +12,22 @@ export interface RegistrationResponse {
     clientCode: number;
 }
 
-export interface LoginRequest {
-    clientName: string;
+export interface VisibleRequest {
     clientCode: number;
 }
 
 
-export interface LoginResponse {
+export interface VisibleResponse {
+    message: string;
+}
+
+
+export interface InvisibleRequest {
+    clientCode: number;
+}
+
+
+export interface InvisibleResponse {
     message: string;
 }
 
