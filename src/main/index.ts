@@ -3,11 +3,11 @@ import cors from 'cors';
 import {
     ClientsRequest,
     ClientsResponse,
-    LoginRequest,
-    LoginResponse, MatchesRequest, MatchesResponse,
+    VisibleRequest,
+    VisibleResponse, MatchesRequest, MatchesResponse,
     MatchRequest, MatchResponse,
     RegistrationRequest,
-    RegistrationResponse, SetLocationRequest, SetLocationResponse
+    RegistrationResponse, SetLocationRequest, SetLocationResponse, InvisibleRequest, InvisibleResponse
 } from "../shared/routes";
 import {Client} from "../shared/models";
 import { v4 as uuid } from "uuid"
@@ -83,48 +83,59 @@ app.post("/reg", (req: Request<RegistrationRequest>, res: Response<RegistrationR
     })
 })
 
-app.post("/visible", (req: Request<LoginRequest>, res: Response<LoginResponse>) => {
-    const clientName = req.body.clientName;
+app.post("/visible", (req: Request<VisibleRequest>, res: Response<VisibleResponse>) => {
     const clientCode = req.body.clientCode;
 
-    const clientNames = clients.map(client => client.name);
-    const client = clients.find(client => client.name === clientName);
-    
-    if (clientNames && client) {
-        if (!clientNames.includes(clientName) || client.code !== clientCode) {
-            
-            res.handleResponse({
-                payload: {
-                    message:"error, wrong code"
-                },
-                statusCode: 400
-            })
-            
-        } else {
-            client.authenticated = true;
-            
-            res.handleResponse({
-                payload: {
-                    message: "successfully logged in!"
-                },
-                statusCode: 200
-            });
-        }
-    } else {
+    const options = clients.filter(client => client.code===clientCode);
+    if (options.length !== 1){
         res.handleResponse({
             payload: {
-                message: "client not registered yet"
+                message:"error, wrong code"
             },
             statusCode: 400
-        });
+        })
+        return;
     }
+    const client = options[0];
+    client.visible = true;
+
+    res.handleResponse({
+        payload: {
+            message: "visibility activated!"
+        },
+        statusCode: 200
+    });
+});
+
+app.post("/invisible", (req: Request<InvisibleRequest>, res: Response<InvisibleResponse>) => {
+    const clientCode = req.body.clientCode;
+
+    const options = clients.filter(client => client.code===clientCode);
+    if (options.length !== 1){
+        res.handleResponse({
+            payload: {
+                message:"error, wrong code"
+            },
+            statusCode: 400
+        })
+        return;
+    }
+    const client = options[0];
+    client.visible = false;
+
+    res.handleResponse({
+        payload: {
+            message: "visibility activated!"
+        },
+        statusCode: 200
+    });
 });
 
 
 app.post("/match", (req: Request<MatchRequest>, res: Response<MatchResponse>) => { //the client that wants to match with randomly chosen other client needs to provide their own code for authorization.
     const clientCode = req.body.clientCode;
-    const otherClient = clients.find(cl => cl.authenticated && !cl.code !== clientCode);
-    const thisClient = clients.find(cl => cl.authenticated && cl.code === clientCode);
+    const otherClient = clients.find(cl => cl.visible && !cl.code !== clientCode);
+    const thisClient = clients.find(cl => cl.visible && cl.code === clientCode);
 
     if (thisClient && otherClient && thisClient.name !== otherClient.name) {
         thisClient.activeMatchWith = otherClient.name;
@@ -158,7 +169,7 @@ app.post("/match", (req: Request<MatchRequest>, res: Response<MatchResponse>) =>
 })
 
 app.get("/clients", (req: Request<ClientsRequest>, res:Response<ClientsResponse>) => {
-    const authenticatedClients = clients.filter(cl => cl.authenticated).map(cl => cl.name);
+    const authenticatedClients = clients.filter(cl => cl.visible).map(cl => cl.name);
     res.handleResponse({
         payload: {
             clients: authenticatedClients
@@ -192,7 +203,7 @@ app.get("/matches", (req: Request<MatchesRequest>,res:Response<MatchesResponse>)
 
 app.post("/setLocation", (req: Request<SetLocationRequest>, res: Response<SetLocationResponse>) => { 
     const clientCode = req.body.clientCode;
-    const thisClient = clients.find(cl => cl.authenticated && cl.code === clientCode);
+    const thisClient = clients.find(cl => cl.visible && cl.code === clientCode);
     res.handleResponse({
         payload: {
             clientLocation: req.body.clientLocation,
@@ -205,9 +216,9 @@ app.post("/setLocation", (req: Request<SetLocationRequest>, res: Response<SetLoc
 
 app.post("/getLocationOfMatch", (req, res) => {
     const clientCode = req.body.clientCode;
-    const thisClient = clients.find(cl => cl.authenticated && cl.code === clientCode);
+    const thisClient = clients.find(cl => cl.visible && cl.code === clientCode);
     console.log("this client: ",thisClient)
-    const otherClient = clients.find(cl => cl.authenticated && cl.activeMatchWith === thisClient.name);
+    const otherClient = clients.find(cl => cl.visible && cl.activeMatchWith === thisClient.name);
     console.log("other client: ",otherClient)
     res.handleResponse({
         payload: {
