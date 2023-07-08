@@ -1,18 +1,37 @@
 import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../state/store";
-import {match, pullLocation, pushLocation, setMyLocation} from "../state/huntingSlice";
 import Pointer from "../components/Pointer";
 import * as Location from 'expo-location';
 import {Button, StyleSheet, View} from "react-native";
 import {flashError, flashSuccess, flashWarning} from "../services/flasher";
+import {useEndpointGetLocationFromMatch, useEndpointMatch, useEndpointSetLocation} from "../state/huntingSlice";
 
 const HuntingScreen = () => {
     const dispatch: AppDispatch = useDispatch();
+
+    const [updateCounter,setUpdateCounter] = useState(0);
+    
+    
     const myLocation = useSelector((state: RootState) => state.hunting.myLocation);
     const otherLocation = useSelector((state: RootState) => state.hunting.otherLocation);
     const huntingActive = useSelector((state:RootState) => state.hunting.huntingActive);
-    const [updateCounter,setUpdateCounter] = useState(0);
+    const clientCode = useSelector((state:RootState) => state.auth.code);
+    
+    const setLocationEndpoint = useEndpointSetLocation({
+        onSuccess: () => {},
+        onFailure: flashError
+    });
+    
+    const getLocationFromMatchEndpoint = useEndpointGetLocationFromMatch({
+        onSuccess: () => {},
+        onFailure: flashError
+    })
+    
+    const matchEndpoint = useEndpointMatch({
+        onSuccess: () => flashSuccess("Successfully Matched!"),
+        onFailure: flashError
+    })
     
     useEffect(() => {
         (async () => {
@@ -38,23 +57,21 @@ const HuntingScreen = () => {
     useEffect(()=>{
         Location.getCurrentPositionAsync({})
             .then(location => {
-                dispatch(setMyLocation({
-                    latitude: location.coords.latitude,
-                    longitude: location.coords.longitude,
-                }))
-                dispatch(pushLocation({
-                    args:{},
-                    onFailure: flashError
-                }))
+                setLocationEndpoint({
+                    clientCode,
+                    clientLocation: {
+                        latitude: location.coords.latitude,
+                        longitude: location.coords.longitude,   
+                    }
+                })
             })
             .catch(error =>{
                 flashError(error)
             });
         if (huntingActive){
-            dispatch(pullLocation({
-                args:{},
-                onFailure: flashError
-            }))
+            getLocationFromMatchEndpoint({
+                clientCode
+            })
         }
     },[updateCounter]);
     const HuntingActiveScenario = () => {
@@ -70,11 +87,9 @@ const HuntingScreen = () => {
         return(
             <View>
                 <Button title={"Match now!"} onPress={()=>{
-                    dispatch(match({
-                        onFailure: flashError,
-                        onSuccess: () => flashSuccess("Successfully Matched!"),
-                        args:{}
-                    }))
+                    matchEndpoint({
+                        clientCode
+                    })
                 }} />
             </View>
         )

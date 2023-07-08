@@ -1,9 +1,9 @@
 import {
+    ActionCreatorWithOptionalPayload,
     ActionReducerMapBuilder,
     AsyncThunk,
     createAsyncThunk,
     Draft,
-    isRejectedWithValue,
     PayloadAction
 } from "@reduxjs/toolkit";
 import {AppDispatch, RootState} from "./store";
@@ -11,7 +11,11 @@ import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
 import {apiUrl} from "./config";
 import {callApi} from "./apiSlice";
-import {Simulate} from "react-dom/test-utils";
+import {v4 as uuid} from "uuid"
+import {MatchStartedPiggyBagPayload, ResponsePiggyBag} from "../shared/models";
+import {flashError} from "../services/flasher";
+
+
 
 type ThunkParams<Request> = { url: string; payload: Request }
 
@@ -19,14 +23,71 @@ type Callback = {
     onFailure: (error: string) => void,
     onSuccess: () => void
 }
-export const createApiHook = <RequestType,ResponseType>(urlPath: string,thunk: AsyncThunk<ResponseType,ThunkParams<RequestType>,any>) => {
+
+
+interface ApiState<Response> {
+    data: Response | null;
+    loading: boolean;
+    error: string | null;
+}
+
+export type ApiStates = { [path: string]: ApiState<any> }
+
+
+const fetchedBags: uuid = [];
+
+type PiggyPackingCase = { 
+    applies: (piggyBag: ResponsePiggyBag) => boolean,
+    resolve: (dispatch: AppDispatch, piggyBag: ResponsePiggyBag) => void,
+}
+const usePiggyPacking = (piggyPackingCases:PiggyPackingCase[]) => {
+    
+    const dispatch:AppDispatch = useDispatch()
+    return (piggyBag: ResponsePiggyBag) => {
+        
+        if (!piggyBag)
+            return;
+        //dont handle piggyBags twice
+        if (uuid.contains(piggyBag.id))
+            return;
+
+        try {
+            let resolved: boolean = false;
+            for (const piggyPackingCase of piggyPackingCases) {
+                if (piggyPackingCase.applies(piggyBag)){
+                    piggyPackingCase.resolve(dispatch,piggyBag);
+                    resolved = true;
+                    fetchedBags.push(piggyBag.id);
+                    break;
+                }
+            }
+            if (!resolved)
+                flashError("Hey, watch out!","This piggyBag contained something weird!")
+        }
+        catch (error){
+            flashError("PiggyBacking failed", error)
+
+        }
+    }    
+}
+
+export const createHook = <RequestType>(actionCreator: ActionCreatorWithOptionalPayload<RequestType, string>) => {
+    return () => {
+        const dispatch:AppDispatch = useDispatch();
+        return (request:RequestType) => dispatch(actionCreator(request));
+    }
+}
+export const createApiHook = <RequestType,ResponseType>(urlPath: string,thunk: AsyncThunk<ResponseType,ThunkParams<RequestType>,any>,apiStatesSelector: (state:RootState)=>ApiStates, customSuccess?: ActionCreatorWithOptionalPayload<ResponseType, string>, piggyPackingCases: PiggyPackingCase[] = []) => {
     return (callback: Callback) => {
         const dispatch:AppDispatch = useDispatch();
-        const status = useSelector((state: RootState) => state.auth.apiStates[thunk.typePrefix])
-        const [loadingGate,setLoadingGate] = useState(false);
+        const piggyBacking = usePiggyPacking(piggyPackingCases);
 
+        const status = useSelector((state: RootState) => apiStatesSelector(state)[thunk.typePrefix])
+
+        const [loadingGate,setLoadingGate] = useState(false);
         const [callCompleted, setCallCompleted] = useState(false);
 
+        
         useEffect(() => {
             if (status.loading) {
                 setLoadingGate(true);
@@ -42,6 +103,9 @@ export const createApiHook = <RequestType,ResponseType>(urlPath: string,thunk: A
                 callback.onFailure(status.error);
             } else {
                 callback.onSuccess();
+                if (customSuccess)
+                    dispatch(customSuccess(status.data));
+                piggyBacking(status.data.piggyBack);
             }
 
             setLoadingGate(false);
@@ -74,13 +138,7 @@ type AsyncThunkRejectedReducer<SliceType,RequestType,ResponseType> = (
     action:  PayloadAction<unknown, string, ({arg: ThunkParams<RequestType>, requestId: string, requestStatus: "rejected", aborted: boolean, condition: boolean} & {rejectedWithValue: true}) | {arg: ThunkParams<RequestType>, requestId: string, requestStatus: "rejected", aborted: boolean, condition: boolean}, unknown>
 ) => void
 
-interface ApiState<Response> {
-    data: Response | null;
-    loading: boolean;
-    error: string | null;
-}
 
-export type ApiStates = { [path: string]: ApiState<any> }
 export const initialApiState: ApiState<any> = {
     data: null,
     loading: false,

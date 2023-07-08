@@ -7,7 +7,9 @@ import {
     VisibleRequest, VisibleResponse
 } from "../shared/routes";
 import {createPOSTApiAsyncThunk, createApiHook, createApiBuilder, ApiStates, initialApiState} from "./apiHelper";
+import {RootState} from "./store";
 
+const apiStatesSelector = (state:RootState)=>state.auth.apiStates;
 
 interface Identity {
     name: string | null;
@@ -31,13 +33,8 @@ const initialState: Identity = {
 
 
 const register = createPOSTApiAsyncThunk<RegistrationRequest,RegistrationResponse>("register");
-export const useRegister = createApiHook("/reg",register);
-
 const invisible = createPOSTApiAsyncThunk<InvisibleRequest,InvisibleResponse>("invisible");
-export const useInvisible = createApiHook("/invisible",invisible);
-
 const visible = createPOSTApiAsyncThunk<VisibleRequest,VisibleResponse>("visible");
-export const useVisible = createApiHook("/visible",visible);
 
 
 const authSlice = createSlice({
@@ -59,4 +56,9 @@ const authSlice = createSlice({
     }
 });
 
+const useEndpointVisible = createApiHook("/visible",visible,apiStatesSelector);
+const useEndpointInvisible = createApiHook("/invisible",invisible,apiStatesSelector);
+const useEndpointRegister = createApiHook("/reg",register,apiStatesSelector);
+
 export default authSlice.reducer;
+export {useEndpointVisible,useEndpointInvisible,useEndpointRegister}

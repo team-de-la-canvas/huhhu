@@ -2,15 +2,19 @@ import React, {useEffect, useState} from "react";
 import {Button, SafeAreaView, StyleSheet, Text, TextInput, View} from "react-native";
 import {AppDispatch} from "../state/store";
 import {flashError, flashSuccess} from "../services/flasher";
-import {useRegister} from "../state/authSlice";
+import {useEndpointRegister} from "../state/authSlice";
 // import {useSnackbar} from "notistack";
 
 export default function Register(){
-    const register = useRegister({
+    const [username, setUserName] = useState("");
+
+
+    const register = useEndpointRegister({
         onFailure: flashError,
         onSuccess: () => flashSuccess(`Successfully Logged in as ${username}!`)
     });
-    const [username, setUserName] = useState("");
+    
+    
     return(
         <View style={styles.container}>
             <View style={styles.card}>
