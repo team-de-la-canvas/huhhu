@@ -136,6 +136,16 @@ app.post("/match", (req: Request<MatchRequest>, res: Response<MatchResponse>) =>
     const clientCode = req.body.clientCode;
     const otherClient = clients.find(cl => cl.visible && !cl.code !== clientCode);
     const thisClient = clients.find(cl => cl.visible && cl.code === clientCode);
+    
+    if (!otherClient){
+        res.handleResponse({
+            statusCode: 500,
+            payload:{
+                message: "No match available"
+            }
+        });
+        return;
+    }
 
     if (thisClient && otherClient && thisClient.name !== otherClient.name) {
         thisClient.activeMatchWith = otherClient.name;
@@ -204,13 +214,24 @@ app.get("/matches", (req: Request<MatchesRequest>,res:Response<MatchesResponse>)
 app.post("/setLocation", (req: Request<SetLocationRequest>, res: Response<SetLocationResponse>) => { 
     const clientCode = req.body.clientCode;
     const thisClient = clients.find(cl => cl.visible && cl.code === clientCode);
-    res.handleResponse({
-        payload: {
-            clientLocation: req.body.clientLocation,
-            piggyBack: thisClient.piggyBack
-        },
-        statusCode: 200
-    });
+    if (thisClient)
+    {
+        res.handleResponse({
+            payload: {
+                clientLocation: req.body.clientLocation,
+                piggyBack: thisClient.piggyBack
+            },
+            statusCode: 200
+        });
+    } else {
+        res.handleResponse({
+            payload: {
+                message: "Client not registered yet"
+            },
+            statusCode: 400
+        });
+    }
+    
 })
 
 
