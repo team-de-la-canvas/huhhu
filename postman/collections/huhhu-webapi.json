@@ -1,0 +1,337 @@
+{
+	"info": {
+		"_postman_id": "7afee8da-9581-46de-92a8-046eaeb7f831",
+		"name": "huhhu-webapi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_uid": "27960915-7afee8da-9581-46de-92a8-046eaeb7f831"
+	},
+	"item": [
+		{
+			"name": "debugSetState",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "b18a2a10-10de-4d75-a52a-66956951d0c1",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "b6bebc1a-11d8-4f16-af18-fbc4e4f14705",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"id": "9a49832a-ed4c-45cd-a998-79bb43beda65",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n    { \"name\": \"moritz\", \"code\": {{moritz.code}}, \"visible\": true, \r\n        \"location\":{\r\n            \"longitude\": \"30\",\r\n            \"latitude\": \"30\"\r\n        }\r\n    },\r\n    { \"name\": \"fabian\", \"code\": {{fabian.code}}, \"visible\": true, \r\n        \"location\":{\r\n            \"longitude\": \"20\",\r\n            \"latitude\": \"20\"\r\n        }\r\n    }\r\n]\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{server}}/debugSetState",
+					"host": [
+						"{{server}}"
+					],
+					"path": [
+						"debugSetState"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "register new client",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6beeac06-005c-448a-ab4b-b041079c6ac8",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"clientCode exists\", () => {\r",
+							"    var jsonResponse = pm.response.json();\r",
+							"    pm.expect(jsonResponse).to.have(\"clientCode\");\r",
+							"    pm.environment.set(\"daniel.code\", jsonResponse.clientCode);\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"id": "a5759b05-5a12-4a07-8ed9-7da10b290a4c",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"clientName\": \"daniel\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{server}}/reg",
+					"host": [
+						"{{server}}"
+					],
+					"path": [
+						"reg"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Set visible",
+			"id": "78b785af-1e45-46ce-9ee3-7efc5cebb79c",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"clientCode\": 1430\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{server}}/visible",
+					"host": [
+						"{{server}}"
+					],
+					"path": [
+						"visible"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Set invisible",
+			"id": "85982095-f11d-4a86-ba32-e8c80e5e88d8",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"clientCode\": 1430\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{server}}/invisible",
+					"host": [
+						"{{server}}"
+					],
+					"path": [
+						"invisible"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "match a random client by authenticated with own client code",
+			"id": "c555cc88-1de6-4256-8f63-9139d5084ed8",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"clientCode\": 1430\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{server}}/match",
+					"host": [
+						"{{server}}"
+					],
+					"path": [
+						"match"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "list all connected clients",
+			"id": "55158f98-a56f-4c61-a268-0ac32f96bd86",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{server}}/clients",
+					"host": [
+						"{{server}}"
+					],
+					"path": [
+						"clients"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "list all matches",
+			"id": "3d79e641-67f8-4648-9e8c-b1a30adfafd5",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{server}}/matches",
+					"host": [
+						"{{server}}"
+					],
+					"path": [
+						"matches"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "setLocation",
+			"id": "b8c8ded3-163c-44b4-b318-887d017ecb3e",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"clientCode\": 1,\r\n    \"clientLocation\": {\r\n        \"latitude\": \"0\",\r\n        \"longitude\": \"50\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{server}}/setLocation",
+					"host": [
+						"{{server}}"
+					],
+					"path": [
+						"setLocation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getLocationOfMatch",
+			"id": "c0bd55e3-50e4-4843-a623-85d62edbd941",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"clientCode\":  1430\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{server}}/getLocationOfMatch",
+					"host": [
+						"{{server}}"
+					],
+					"path": [
+						"getLocationOfMatch"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "97347cdb-ed9c-45bb-b1ce-3222381cc1b4",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "50d7d2a4-a847-42c1-8397-96490cc1f71a",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "eae4abc0-33b4-4f46-ab24-cf05fc8c9827",
+			"key": "server",
+			"value": "https://huhhu.app",
+			"type": "string"
+		}
+	]
+}
