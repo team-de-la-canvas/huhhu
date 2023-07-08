@@ -69,7 +69,9 @@ app.post("/reg", (req: Request<RegistrationRequest>, res: Response<RegistrationR
     const clientName = req.body.clientName;
     if (!clientName || clients.find(cl => cl.name === clientName)) {
         res.handleResponse({
-            payload: "Error registering under this clientName. Potentially already registered.",
+            payload: {
+                message: "Error registering under this clientName. Potentially already registered."
+            },
             statusCode: 400
         });
         return;
