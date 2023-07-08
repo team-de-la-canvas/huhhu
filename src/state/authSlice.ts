@@ -6,21 +6,15 @@ import {
     RegistrationResponse,
     VisibleRequest, VisibleResponse
 } from "../shared/routes";
-import {createPOSTApiAsyncThunk, createApiHook, createApiBuilder} from "./apiHelper";
+import {createPOSTApiAsyncThunk, createApiHook, createApiBuilder, ApiStates, initialApiState} from "./apiHelper";
 
-
-interface ApiState<Response> {
-    data: Response | null;
-    loading: boolean;
-    error: string | null;
-}
 
 interface Identity {
     name: string | null;
     code: number | null;
     visible: boolean;
     registered: boolean;
-    apiStates: { [path: string]: ApiState<any> }
+    apiStates: ApiStates
 }
 
 const initialState: Identity = {
@@ -28,7 +22,11 @@ const initialState: Identity = {
     code: null,
     visible: false,
     registered: false,
-    apiStates: {}
+    apiStates: {
+        register: {...initialApiState},
+        visible: {...initialApiState},
+        invisible: {...initialApiState}
+    }
 };
 
 
