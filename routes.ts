@@ -39,7 +39,7 @@ export interface MatchRequest {
 
 export interface MatchResponse {
     message: string;
-    matchName : string|unknown;
+    matchName : string;
 }
 
 export interface ClientsRequest {
