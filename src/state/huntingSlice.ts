@@ -2,8 +2,6 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {ActionArgs, post} from "./apiSlice";
 import {
     GetLocationOfMatchRequest, GetLocationOfMatchResponse, MatchRequest, MatchResponse,
-    RegistrationRequest,
-    RegistrationResponse,
     SetLocationRequest,
     SetLocationResponse
 } from "../shared/routes";

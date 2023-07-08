@@ -21,11 +21,11 @@ type Callback = {
     onSuccess: () => void
 }
 export const createApiHook = <RequestType,ResponseType>(urlPath: string,thunk: AsyncThunk<ResponseType,ThunkParams<RequestType>,any>) => {
-    const dispatch:AppDispatch = useDispatch();
-    const status = useSelector((state: RootState) => state.auth.apiStates[urlPath])
-    const [loadingGate,setLoadingGate] = useState(false);
-
     return (callback: Callback) => {
+        const dispatch:AppDispatch = useDispatch();
+        const status = useSelector((state: RootState) => state.auth.apiStates[urlPath])
+        const [loadingGate,setLoadingGate] = useState(false);
+
         useEffect(() => {
             if (status.loading)
                 setLoadingGate(true);
@@ -36,7 +36,7 @@ export const createApiHook = <RequestType,ResponseType>(urlPath: string,thunk: A
             } else {
                 callback.onSuccess()
             }
-        }, [status.loading, status.error, callback, dispatch]);
+        }, [status, callback, dispatch]);
         return (request: RequestType) => dispatch(thunk({
             url: apiUrl+urlPath,
             payload: request
