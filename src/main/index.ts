@@ -10,8 +10,9 @@ import {
     RegistrationResponse, SetLocationRequest, SetLocationResponse, InvisibleRequest, InvisibleResponse
 } from "../shared/routes";
 import {Client} from "../shared/models";
-import { v4 as uuid } from "uuid"
 import {randomUUID} from "crypto";
+
+const debug = process.env["debug"]==="true";
 
 
 const app = express();
@@ -26,7 +27,10 @@ type ResponseHandlerArgs<ResponseType> = {
 const handleResponseWrapper = <ResponseType>(res: Response, args: ResponseHandlerArgs<ResponseType>) => {
     const { payload, statusCode } = args;
     const previousState = JSON.parse(JSON.stringify(clients));
-    res.status(statusCode).send(payload);
+    let actualPayload = payload;
+    if (debug)
+        actualPayload = {...payload,state:previousState};
+    res.status(statusCode).send(actualPayload);
     console.log({
         action: args,
         statePreExecution: previousState,
