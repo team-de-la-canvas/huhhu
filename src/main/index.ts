@@ -215,7 +215,7 @@ app.get("/matches", (req: Request<MatchesRequest>,res:Response<MatchesResponse>)
 
 app.post("/setLocation", (req: Request<SetLocationRequest>, res: Response<SetLocationResponse>) => { 
     const clientCode = req.body.clientCode;
-    const thisClient = clients.find(cl => cl.visible && cl.code === clientCode);
+    const thisClient = clients.find(cl => cl.code === clientCode);
     if (thisClient)
     {
         res.handleResponse({
