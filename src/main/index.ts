@@ -243,6 +243,17 @@ app.post("/getLocationOfMatch", (req, res) => {
     console.log("this client: ",thisClient)
     const otherClient = clients.find(cl => cl.visible && cl.activeMatchWith === thisClient.name);
     console.log("other client: ",otherClient)
+    
+    if (otherClient && otherClient.location === undefined){
+        res.handleResponse({
+            statusCode: 404,
+            payload:{
+                message: "No location found"
+            }
+        });
+        return;
+    }
+    
     res.handleResponse({
         payload: {
             clientLocation:otherClient.location
