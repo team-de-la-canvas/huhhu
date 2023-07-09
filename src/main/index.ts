@@ -222,9 +222,12 @@ app.post("/setLocation", (req: Request<SetLocationRequest>, res: Response<SetLoc
     const thisClient = clients.find(cl => cl.code === clientCode);
     if (thisClient)
     {
+        const newLocation = req.body.clientLocation; 
+        
+        thisClient.location =newLocation; 
         res.handleResponse({
             payload: {
-                clientLocation: req.body.clientLocation,
+                clientLocation: newLocation,
                 piggyBack: thisClient.piggyBack
             },
             statusCode: 200
@@ -248,7 +251,7 @@ app.post("/getLocationOfMatch", (req, res) => {
     const otherClient = clients.find(cl => cl.visible && cl.activeMatchWith === thisClient.name);
     console.log("other client: ",otherClient)
     
-    if (otherClient && otherClient.location === undefined){
+    if (!otherClient || otherClient.location === undefined){
         res.handleResponse({
             statusCode: 404,
             payload:{
