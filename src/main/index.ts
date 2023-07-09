@@ -136,7 +136,7 @@ app.post("/invisible", (req: Request<InvisibleRequest>, res: Response<InvisibleR
 
 app.post("/match", (req: Request<MatchRequest>, res: Response<MatchResponse>) => { //the client that wants to match with randomly chosen other client needs to provide their own code for authorization.
     const clientCode = req.body.clientCode;
-    const otherClient = clients.find(cl => cl.visible && !cl.code !== clientCode);
+    const otherClient = clients.find(cl => cl.visible && !cl.code !== clientCode && cl.activeMatchWith === undefined);
     const thisClient = clients.find(cl => cl.visible && cl.code === clientCode);
     
     if (!otherClient){
