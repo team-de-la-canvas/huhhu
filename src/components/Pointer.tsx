@@ -1,19 +1,20 @@
 import React, {useRef, useEffect, useState} from 'react';
 import {Animated, Easing, StyleSheet, Text,Image} from 'react-native';
-import { LocationModel } from "../shared/models";
+import {useHuntingSelector} from "../state/huntingSlice";
 
-type PointerArgs = {
-    myLocation: LocationModel,
-    otherLocation: LocationModel
-}
 
-const Pointer = ({ myLocation, otherLocation }: PointerArgs) => {
+
+const Pointer = () => {
     const rotation = useRef(new Animated.Value(0)).current;
     const [valid,setValid] = useState(false);
+
+    const myLocation = useHuntingSelector(state =>state.myLocation);
+    const otherLocation = useHuntingSelector(state =>state.otherLocation);
     useEffect(() => {
         if (myLocation&&otherLocation) {
             setValid(true);
             const angleDeg = calculateAngle();
+            console.log(rotation)
             Animated.timing(rotation, {
                 toValue: angleDeg,
                 duration: 2000,

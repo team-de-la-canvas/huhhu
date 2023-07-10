@@ -81,7 +81,7 @@ const HuntingScreen = () => {
         
         return(
             <View style={styles.pointerScreen}>
-                <Pointer myLocation={myLocation} otherLocation={otherLocation}/>
+                <Pointer/>
             </View>
         )
     }

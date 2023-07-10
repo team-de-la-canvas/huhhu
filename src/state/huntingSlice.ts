@@ -11,7 +11,7 @@ import {
 } from "../shared/routes";
 import {LocationModel, MatchCanceledPiggyBagPayload} from "../shared/models";
 import {
-    ApiStates,
+    ApiStates, ApiStatesState,
     createApiBuilder,
     createApiHook, createHook,
     createPOSTApiAsyncThunk,
@@ -19,11 +19,14 @@ import {
 } from "./apiHelper";
 import {RootState} from "./store";
 import {flashSuccess, flashWarning} from "../services/flasher";
+import {useSelector} from "react-redux";
 
-const apiStatesSelector = (state:RootState) => state.hunting.apiStates
+const apiSelector = (state:RootState) => state.hunting
 
-interface HuntingState {
+interface HuntingState extends  ApiStatesState {
     myLocation: LocationModel;
+    myMockedLocation: LocationModel
+    mockedLocation: boolean,
     otherLocation: LocationModel,
     huntingActive: boolean,
     matchName: string |undefined,
@@ -31,11 +34,12 @@ interface HuntingState {
     code: number | null;
     visible: boolean;
     registered: boolean;
-    apiStates: ApiStates
 }
 
 const initialState: HuntingState = {
     myLocation: null,
+    myMockedLocation: null, 
+    mockedLocation: false,
     otherLocation: null,
     huntingActive: false,
     matchName: undefined,
@@ -76,6 +80,15 @@ const huntingSlice = createSlice({
         setMatch(state, action: PayloadAction<MatchResponse>){
             state.matchName = action.payload.matchName
             state.huntingActive = true;
+        },
+        setMockLocation(state, action: PayloadAction<LocationModel>){
+            state.myMockedLocation = action.payload;
+        },
+        enableMockLocation(state){
+            state.mockedLocation = true;
+        },
+        disableMockLocation(state){
+            state.mockedLocation = false
         }
     },
     extraReducers: builder => {
@@ -103,36 +116,62 @@ const huntingSlice = createSlice({
 });
 
 //Hooks
-const useEndpointMatch = createApiHook("/match",match,apiStatesSelector)
-const useEndpointSetLocation = createApiHook("/setLocation",setLocation,apiStatesSelector,(dispatch,payload)=> {
-    dispatch(huntingSlice.actions.setMyLocation(payload))
-},[
-    {
-        applies: (piggyBag) => piggyBag.type==="matchStarted",
-        resolve: (dispatch,piggyBag) => {
-            const payload = piggyBag.payload as MatchResponse;
-            dispatch(huntingSlice.actions.setMatch(payload))
-            flashSuccess("Match Started", `You successfully matched with ${payload.matchName}`)
+const useEndpointMatch = createApiHook("/match",match,apiSelector,{})
+const useEndpointSetLocation = createApiHook("/setLocation",setLocation,apiSelector,{
+    requestPayLoadTransformation: (payload, sliceState) => {
+        console.log(sliceState)
+        return {
+            ...payload,
+            clientLocation: sliceState.mockedLocation? sliceState.myMockedLocation: payload.clientLocation
         }
     },
-    {
-        applies: piggyBag => piggyBag.type === "matchCanceled",
-        resolve: (dispatch,piggyBag) =>{
-            const payload = piggyBag.payload as MatchCanceledPiggyBagPayload
-            dispatch(huntingSlice.actions.deactivateHunting())
-            flashWarning("Match canceled",`${payload.message}`)
-        }
-    }])
-const useEndpointGetLocationOfMatch = createApiHook("/getLocationOfMatch",getLocationOfMatch,apiStatesSelector)
+    customSuccess: (dispatch,payload)=> {
+        dispatch(huntingSlice.actions.setMyLocation(payload))
+    },
+    piggyPackingCases:[
+        {
+            applies: (piggyBag) => piggyBag.type==="matchStarted",
+            resolve: (dispatch,piggyBag) => {
+                const payload = piggyBag.payload as MatchResponse;
+                dispatch(huntingSlice.actions.setMatch(payload))
+                flashSuccess("Match Started", `You successfully matched with ${payload.matchName}`)
+            }
+        },
+        {
+            applies: piggyBag => piggyBag.type === "matchCanceled",
+            resolve: (dispatch,piggyBag) =>{
+                const payload = piggyBag.payload as MatchCanceledPiggyBagPayload
+                dispatch(huntingSlice.actions.deactivateHunting())
+                flashWarning("Match canceled",`${payload.message}`)
+            }
+        }] 
+})
+const useEndpointGetLocationOfMatch = createApiHook("/getLocationOfMatch",getLocationOfMatch,apiSelector,{})
 
-const useEndpointVisible = createApiHook("/visible",visible,apiStatesSelector);
-const useEndpointInvisible = createApiHook("/invisible",invisible,apiStatesSelector,(dispatch) => {
-    dispatch(huntingSlice.actions.deactivateHunting())
+const useEndpointVisible = createApiHook("/visible",visible,apiSelector,{});
+const useEndpointInvisible = createApiHook("/invisible",invisible,apiSelector, {
+    customSuccess: (dispatch) => {
+        dispatch(huntingSlice.actions.deactivateHunting())
+    }
 });
-const useEndpointRegister = createApiHook("/reg",register,apiStatesSelector);
+const useEndpointRegister = createApiHook("/reg",register,apiSelector,{});
+const useSetMockLocation = createHook(huntingSlice.actions.setMockLocation);
+const useEnableMockLocation = createHook(huntingSlice.actions.enableMockLocation);
+const useDisableMockLocation = createHook(huntingSlice.actions.disableMockLocation);
 
-
-
+type HuntingStateKeySelectorWithoutApiStates = (state: Omit<HuntingState, 'apiStates'>) => any;
+export const useHuntingSelector = (selector: HuntingStateKeySelectorWithoutApiStates) =>
+    useSelector((root: RootState) => selector(root.hunting));
 export default huntingSlice.reducer;
 
-export {useEndpointSetLocation,useEndpointGetLocationOfMatch,useEndpointMatch,useEndpointVisible,useEndpointInvisible,useEndpointRegister}
+export {
+    useEndpointSetLocation,
+    useEndpointGetLocationOfMatch,
+    useEndpointMatch,
+    useEndpointVisible,
+    useEndpointInvisible,
+    useEndpointRegister,
+    useSetMockLocation,
+    useEnableMockLocation,
+    useDisableMockLocation
+}
