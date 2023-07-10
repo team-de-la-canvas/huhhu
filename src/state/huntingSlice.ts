@@ -9,7 +9,7 @@ import {
     SetLocationRequest,
     SetLocationResponse, VisibleRequest, VisibleResponse
 } from "../shared/routes";
-import {LocationModel} from "../shared/models";
+import {LocationModel, MatchCanceledPiggyBagPayload} from "../shared/models";
 import {
     ApiStates,
     createApiBuilder,
@@ -18,6 +18,7 @@ import {
     initialApiState
 } from "./apiHelper";
 import {RootState} from "./store";
+import {flashSuccess, flashWarning} from "../services/flasher";
 
 const apiStatesSelector = (state:RootState) => state.hunting.apiStates
 
@@ -103,23 +104,35 @@ const huntingSlice = createSlice({
 
 //Hooks
 const useEndpointMatch = createApiHook("/match",match,apiStatesSelector)
-const useEndpointSetLocation = createApiHook("/setLocation",setLocation,apiStatesSelector,huntingSlice.actions.setMyLocation,[{
-    applies: (piggyBag) => piggyBag.type==="matchStarted",
-    resolve: (dispatch,piggyBag) => {
-        dispatch(huntingSlice.actions.setMatch(piggyBag.payload as MatchResponse))
-    }
-}])
+const useEndpointSetLocation = createApiHook("/setLocation",setLocation,apiStatesSelector,(dispatch,payload)=> {
+    dispatch(huntingSlice.actions.setMyLocation(payload))
+},[
+    {
+        applies: (piggyBag) => piggyBag.type==="matchStarted",
+        resolve: (dispatch,piggyBag) => {
+            const payload = piggyBag.payload as MatchResponse;
+            dispatch(huntingSlice.actions.setMatch(payload))
+            flashSuccess("Match Started", `You successfully matched with ${payload.matchName}`)
+        }
+    },
+    {
+        applies: piggyBag => piggyBag.type === "matchCanceled",
+        resolve: (dispatch,piggyBag) =>{
+            const payload = piggyBag.payload as MatchCanceledPiggyBagPayload
+            dispatch(huntingSlice.actions.deactivateHunting())
+            flashWarning("Match canceled",`${payload.message}`)
+        }
+    }])
 const useEndpointGetLocationOfMatch = createApiHook("/getLocationOfMatch",getLocationOfMatch,apiStatesSelector)
 
-const useDeactivateHunting = createHook(huntingSlice.actions.deactivateHunting);
-
-
 const useEndpointVisible = createApiHook("/visible",visible,apiStatesSelector);
-const useEndpointInvisible = createApiHook("/invisible",invisible,apiStatesSelector);
+const useEndpointInvisible = createApiHook("/invisible",invisible,apiStatesSelector,(dispatch) => {
+    dispatch(huntingSlice.actions.deactivateHunting())
+});
 const useEndpointRegister = createApiHook("/reg",register,apiStatesSelector);
 
 
 
 export default huntingSlice.reducer;
 
-export {useEndpointSetLocation,useEndpointGetLocationOfMatch,useEndpointMatch,useDeactivateHunting,useEndpointVisible,useEndpointInvisible,useEndpointRegister}
+export {useEndpointSetLocation,useEndpointGetLocationOfMatch,useEndpointMatch,useEndpointVisible,useEndpointInvisible,useEndpointRegister}

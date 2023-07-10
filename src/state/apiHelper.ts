@@ -21,7 +21,7 @@ type ThunkParams<Request> = { url: string; payload: Request }
 
 type Callback = {
     onFailure: (error: string) => void,
-    onSuccess: () => void
+    onSuccess?: () => void
 }
 
 
@@ -93,7 +93,8 @@ export const createHook = <RequestType>(actionCreator: ActionCreatorWithOptional
         return (request:RequestType) => dispatch(actionCreator(request));
     }
 }
-export const createApiHook = <RequestType,ResponseType>(urlPath: string,thunk: AsyncThunk<ResponseType,ThunkParams<RequestType>,any>,apiStatesSelector: (state:RootState)=>ApiStates, customSuccess?: ActionCreatorWithOptionalPayload<ResponseType, string>, piggyPackingCases: PiggyPackingCase[] = []) => {
+type SuccessfulPayloadCallback<ResponseType> = (dispatch:AppDispatch, payload: ResponseType) => void
+export const createApiHook = <RequestType,ResponseType>(urlPath: string,thunk: AsyncThunk<ResponseType,ThunkParams<RequestType>,any>,apiStatesSelector: (state:RootState)=>ApiStates, customSuccess?: SuccessfulPayloadCallback<ResponseType>, piggyPackingCases: PiggyPackingCase[] = []) => {
     return (callback: Callback) => {
         const dispatch:AppDispatch = useDispatch();
         const piggyBacking = usePiggyPacking(piggyPackingCases);
@@ -118,9 +119,10 @@ export const createApiHook = <RequestType,ResponseType>(urlPath: string,thunk: A
             if (status.error) {
                 callback.onFailure(status.error);
             } else {
-                callback.onSuccess();
+                if (callback.onSuccess)
+                    callback.onSuccess();
                 if (customSuccess)
-                    dispatch(customSuccess(status.data));
+                    customSuccess(dispatch,status.data);
                 piggyBacking(status.data.piggyBack);
             }
 

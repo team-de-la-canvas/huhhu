@@ -10,7 +10,7 @@ function SettingsScreen() {
         onFailure: flashError,
         onSuccess: () => {}
     });
-    const clientCode = useSelector((state:RootState) => state.auth.code);
+    const clientCode = useSelector((state:RootState) => state.hunting.code);
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <Text>Settings Screen</Text>
