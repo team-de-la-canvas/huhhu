@@ -34,7 +34,7 @@ interface ApiState<Response> {
 export type ApiStates = { [path: string]: ApiState<any> }
 
 
-const fetchedBags: uuid = [];
+const fetchedBags: uuid[] = [];
 
 type PiggyPackingCase = { 
     applies: (piggyBag: ResponsePiggyBag) => boolean,
@@ -48,7 +48,7 @@ const usePiggyPacking = (piggyPackingCases:PiggyPackingCase[]) => {
         if (!piggyBag)
             return;
         //dont handle piggyBags twice
-        if (uuid.contains(piggyBag.id))
+        if (fetchedBags.includes(piggyBag.id))
             return;
 
         try {

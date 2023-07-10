@@ -32,14 +32,14 @@ const initialState: HuntingState = {
     apiStates: {
         match: initialApiState,
         setLocation: initialApiState,
-        getLocationFromMatch: initialApiState
+        getLocationOfMatch: initialApiState
     }
 };
 
 
 const match = createPOSTApiAsyncThunk<MatchRequest,MatchResponse>("match")
 const setLocation = createPOSTApiAsyncThunk<SetLocationRequest,SetLocationResponse>("setLocation");
-const getLocationFromMatch = createPOSTApiAsyncThunk<GetLocationOfMatchRequest,GetLocationOfMatchResponse>("getLocationFromMatch");
+const getLocationOfMatch = createPOSTApiAsyncThunk<GetLocationOfMatchRequest,GetLocationOfMatchResponse>("getLocationOfMatch");
 
 const huntingSlice = createSlice({
     name: 'hunting',
@@ -63,7 +63,7 @@ const huntingSlice = createSlice({
         apiBuilder.addEndpoint(setLocation, (state, action)=>{
 
         })
-        apiBuilder.addEndpoint(getLocationFromMatch, (state,action)=>{
+        apiBuilder.addEndpoint(getLocationOfMatch, (state,action)=>{
             state.otherLocation = action.payload.clientLocation;
         })
     }
@@ -77,7 +77,7 @@ const useEndpointSetLocation = createApiHook("/setLocation",setLocation,apiState
         dispatch(huntingSlice.actions.setMatch(piggyBag.payload as MatchResponse))
     }
 }])
-const useEndpointGetLocationFromMatch = createApiHook("/getLocationFromMatch",getLocationFromMatch,apiStatesSelector)
+const useEndpointGetLocationOfMatch = createApiHook("/getLocationOfMatch",getLocationOfMatch,apiStatesSelector)
 export default huntingSlice.reducer;
 
-export {useEndpointSetLocation,useEndpointGetLocationFromMatch,useEndpointMatch}
+export {useEndpointSetLocation,useEndpointGetLocationOfMatch,useEndpointMatch}

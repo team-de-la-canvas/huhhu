@@ -3,9 +3,12 @@ import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../state/store";
 import Pointer from "../components/Pointer";
 import * as Location from 'expo-location';
-import {Button, StyleSheet, View} from "react-native";
+import {Button, StyleSheet, View,Text} from "react-native";
 import {flashError, flashSuccess, flashWarning} from "../services/flasher";
-import {useEndpointGetLocationFromMatch, useEndpointMatch, useEndpointSetLocation} from "../state/huntingSlice";
+import {useEndpointGetLocationOfMatch, useEndpointMatch, useEndpointSetLocation} from "../state/huntingSlice";
+import Slider from "@react-native-community/slider";
+import VisibilitySlider from "../components/VisibilitySlider";
+import VisibilitySwitch from "../components/VisibilitySwitch";
 
 const HuntingScreen = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -23,7 +26,7 @@ const HuntingScreen = () => {
         onFailure: flashError
     });
     
-    const getLocationFromMatchEndpoint = useEndpointGetLocationFromMatch({
+    const getLocationOfMatchEndpoint = useEndpointGetLocationOfMatch({
         onSuccess: () => {},
         onFailure: flashError
     })
@@ -69,7 +72,7 @@ const HuntingScreen = () => {
                 flashError(error)
             });
         if (huntingActive){
-            getLocationFromMatchEndpoint({
+            getLocationOfMatchEndpoint({
                 clientCode
             })
         }
@@ -94,11 +97,22 @@ const HuntingScreen = () => {
             </View>
         )
     }
-
+    
     return (
-        <>
-            {huntingActive?<HuntingActiveScenario/>:<SearchingActiveScenario/>}
-        </>
+        <View style={{ flex: 1 }}>
+            {/* TOP */}
+            <View style={{ flex: 1 }}>
+                <VisibilitySwitch />
+            </View>
+            {/* MID */}
+            <View style={{ flex: 7 }}>
+                {huntingActive ? <HuntingActiveScenario /> : <SearchingActiveScenario />}
+            </View>
+            {/* BOT */}
+            <View style={{ flex: 1 }}>
+                <VisibilitySlider />
+            </View>
+        </View>
     )
 }
 
