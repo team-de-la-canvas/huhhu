@@ -1,103 +1,86 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import {ActionArgs, post} from "./apiSlice";
 import {
     GetLocationOfMatchRequest, GetLocationOfMatchResponse, MatchRequest, MatchResponse,
-    RegistrationRequest,
-    RegistrationResponse,
     SetLocationRequest,
     SetLocationResponse
 } from "../shared/routes";
-import {login} from "./authSlice";
 import {LocationModel} from "../shared/models";
-import {apiUrl} from "./config";
-import piggyBackingResolver from "../services/piggyBackingResolver";
+import {
+    ApiStates,
+    createApiBuilder,
+    createApiHook, createHook,
+    createPOSTApiAsyncThunk,
+    initialApiState
+} from "./apiHelper";
+import {RootState} from "./store";
+
+const apiStatesSelector = (state:RootState) => state.hunting.apiStates
 
 interface HuntingState {
     myLocation: LocationModel;
     otherLocation: LocationModel,
     huntingActive: boolean,
     matchName: string |undefined
+    apiStates: ApiStates
 }
 
 const initialState: HuntingState = {
     myLocation: null,
     otherLocation: null,
     huntingActive: false,
-    matchName: undefined
+    matchName: undefined,
+    apiStates: {
+        match: initialApiState,
+        setLocation: initialApiState,
+        getLocationOfMatch: initialApiState
+    }
 };
+
+
+const match = createPOSTApiAsyncThunk<MatchRequest,MatchResponse>("match")
+const setLocation = createPOSTApiAsyncThunk<SetLocationRequest,SetLocationResponse>("setLocation");
+const getLocationOfMatch = createPOSTApiAsyncThunk<GetLocationOfMatchRequest,GetLocationOfMatchResponse>("getLocationOfMatch");
 
 const huntingSlice = createSlice({
     name: 'hunting',
     initialState,
     reducers: {
-        // addUser(state, action: PayloadAction<string>) {
-        //     state.users.push(action.payload);
-        // },
-        setMyLocation(state,action: PayloadAction<LocationModel>){
-            state.myLocation = action.payload;
-        },
-        setOtherLocation(state,action: PayloadAction<LocationModel>){
-            console.log("try to set other location");
-            state.otherLocation = action.payload;
-        },
-        activateHunting(state){
-            state.huntingActive = true
+        setMyLocation(state,action: PayloadAction<SetLocationResponse>){
+            state.myLocation = action.payload.clientLocation;
         },
         deactivateHunting(state){
             state.huntingActive = false
         },
-        setMatch(state, action: PayloadAction<string>){
-            state.matchName = action.payload
+        setMatch(state, action: PayloadAction<MatchResponse>){
+            state.matchName = action.payload.matchName
+            state.huntingActive = true;
         }
     },
+    extraReducers: builder => {
+        const apiBuilder = createApiBuilder(builder);
+        apiBuilder.addEndpoint(match,(state, action) => {
+            state.huntingActive = true
+        })
+        apiBuilder.addEndpoint(setLocation, (state, action)=>{
+
+        })
+        apiBuilder.addEndpoint(getLocationOfMatch, (state,action)=>{
+            state.otherLocation = action.payload.clientLocation;
+        })
+    }
 });
 
+//Hooks
+const useEndpointMatch = createApiHook("/match",match,apiStatesSelector)
+const useEndpointSetLocation = createApiHook("/setLocation",setLocation,apiStatesSelector,huntingSlice.actions.setMyLocation,[{
+    applies: (piggyBag) => piggyBag.type==="matchStarted",
+    resolve: (dispatch,piggyBag) => {
+        dispatch(huntingSlice.actions.setMatch(piggyBag.payload as MatchResponse))
+    }
+}])
+const useEndpointGetLocationOfMatch = createApiHook("/getLocationOfMatch",getLocationOfMatch,apiStatesSelector)
 
-export const match = ({onFailure }:ActionArgs<{ }>) => post<MatchRequest,MatchResponse>({
-    requestType: match.name,
-    url: apiUrl+"/match",
-    payload: ({getState}) => {
-        return {
-            clientCode: getState().auth.code
-        }
-    },
-    success: ({payload,dispatch}) => {
-        dispatch(activateHunting())
-        console.log("matched with: ",payload.matchName)
-    },
-    failure: () => onFailure
-})
-
-
-export const pushLocation = ({args,onFailure }:ActionArgs<{  }>) =>
-    post<SetLocationRequest,SetLocationResponse>({
-        requestType: pushLocation.name,
-        url: apiUrl+"/setLocation",
-        payload: ({getState})=>({
-            clientCode: getState().auth.code,
-            clientLocation: getState().hunting.myLocation
-        }),
-        success: ({payload,dispatch})=> {
-            piggyBackingResolver(payload.piggyBack,dispatch);
-        },
-        failure: (error) => onFailure(error.error)
-    })
-
-
-export const pullLocation = ({args,onFailure }:ActionArgs<{ }>) =>
-    post<GetLocationOfMatchRequest,GetLocationOfMatchResponse>({
-        requestType: pullLocation.name,
-        url: apiUrl+"/getLocationOfMatch",
-        payload: ({getState})=>({
-            clientCode: getState().auth.code,
-        }),
-        success: ({payload,dispatch})=> {
-            console.log("got package otherLocation: ",payload)
-            dispatch(setOtherLocation(payload.clientLocation))
-        },
-        failure: (error) => onFailure(error.error)
-    })
-
-export const { setMyLocation,setOtherLocation,activateHunting,deactivateHunting , setMatch} = huntingSlice.actions;
-
+const useDeactivateHunting = createHook(huntingSlice.actions.deactivateHunting);
 export default huntingSlice.reducer;
+
+export {useEndpointSetLocation,useEndpointGetLocationOfMatch,useEndpointMatch,useDeactivateHunting}
