@@ -1,4 +1,4 @@
-import {MatchResponse} from "./routes";
+import {CancelMatchResponse, MatchResponse} from "./routes";
 import {v4 as uuid} from "uuid";
 
 export interface Client{
@@ -24,7 +24,4 @@ export interface ResponsePiggyBag {
 
 export type MatchStartedPiggyBagPayload = MatchResponse
 
-// placeholder
-export interface MatchCanceledPiggyBagPayload {
-
-}
+export type MatchCanceledPiggyBagPayload  = CancelMatchResponse;

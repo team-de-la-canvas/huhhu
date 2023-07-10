@@ -42,6 +42,15 @@ export interface MatchResponse {
     matchName : string|unknown;
 }
 
+export interface CancelMatchRequest {
+    clientCode: number;
+}
+
+
+export interface CancelMatchResponse {
+    message: string;
+}
+
 export interface ClientsRequest {
     clientCode: number;
 }
