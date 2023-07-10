@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {StyleSheet, Switch, View} from "react-native";
-import {useEndpointInvisible, useEndpointVisible} from "../state/authSlice";
+import {useEndpointInvisible, useEndpointVisible} from "../state/huntingSlice";
 import {flashError} from "../services/flasher";
 import {useSelector} from "react-redux";
 import {RootState} from "../state/store";
@@ -17,7 +17,7 @@ const VisibilitySwitch = () => {
         }
     };
     
-    const clientCode = useSelector((state:RootState) => state.auth.code)
+    const clientCode = useSelector((state:RootState) => state.hunting.code)
     
     const visible = useEndpointVisible({
         onFailure: flashError,

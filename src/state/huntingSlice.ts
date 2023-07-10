@@ -1,8 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
-    GetLocationOfMatchRequest, GetLocationOfMatchResponse, MatchRequest, MatchResponse,
+    GetLocationOfMatchRequest,
+    GetLocationOfMatchResponse, InvisibleRequest, InvisibleResponse,
+    MatchRequest,
+    MatchResponse,
+    RegistrationRequest,
+    RegistrationResponse,
     SetLocationRequest,
-    SetLocationResponse
+    SetLocationResponse, VisibleRequest, VisibleResponse
 } from "../shared/routes";
 import {LocationModel} from "../shared/models";
 import {
@@ -20,7 +25,11 @@ interface HuntingState {
     myLocation: LocationModel;
     otherLocation: LocationModel,
     huntingActive: boolean,
-    matchName: string |undefined
+    matchName: string |undefined,
+    name: string | null;
+    code: number | null;
+    visible: boolean;
+    registered: boolean;
     apiStates: ApiStates
 }
 
@@ -29,10 +38,17 @@ const initialState: HuntingState = {
     otherLocation: null,
     huntingActive: false,
     matchName: undefined,
+    name: null,
+    code: null,
+    visible: false,
+    registered: false,
     apiStates: {
         match: initialApiState,
         setLocation: initialApiState,
-        getLocationOfMatch: initialApiState
+        getLocationOfMatch: initialApiState,
+        register: {...initialApiState},
+        visible: {...initialApiState},
+        invisible: {...initialApiState}
     }
 };
 
@@ -40,6 +56,11 @@ const initialState: HuntingState = {
 const match = createPOSTApiAsyncThunk<MatchRequest,MatchResponse>("match")
 const setLocation = createPOSTApiAsyncThunk<SetLocationRequest,SetLocationResponse>("setLocation");
 const getLocationOfMatch = createPOSTApiAsyncThunk<GetLocationOfMatchRequest,GetLocationOfMatchResponse>("getLocationOfMatch");
+const register = createPOSTApiAsyncThunk<RegistrationRequest,RegistrationResponse>("register");
+const invisible = createPOSTApiAsyncThunk<InvisibleRequest,InvisibleResponse>("invisible");
+const visible = createPOSTApiAsyncThunk<VisibleRequest,VisibleResponse>("visible");
+
+
 
 const huntingSlice = createSlice({
     name: 'hunting',
@@ -67,6 +88,16 @@ const huntingSlice = createSlice({
         apiBuilder.addEndpoint(getLocationOfMatch, (state,action)=>{
             state.otherLocation = action.payload.clientLocation;
         })
+        apiBuilder.addEndpoint(register,(state, action)=>{
+            state.registered = true;
+            state.code = action.payload.clientCode;
+        });
+        apiBuilder.addEndpoint(invisible,(state, action)=>{
+            state.visible = false;
+        });
+        apiBuilder.addEndpoint(visible, (state, action) => {
+            state.visible = true;
+        });
     }
 });
 
@@ -81,6 +112,14 @@ const useEndpointSetLocation = createApiHook("/setLocation",setLocation,apiState
 const useEndpointGetLocationOfMatch = createApiHook("/getLocationOfMatch",getLocationOfMatch,apiStatesSelector)
 
 const useDeactivateHunting = createHook(huntingSlice.actions.deactivateHunting);
+
+
+const useEndpointVisible = createApiHook("/visible",visible,apiStatesSelector);
+const useEndpointInvisible = createApiHook("/invisible",invisible,apiStatesSelector);
+const useEndpointRegister = createApiHook("/reg",register,apiStatesSelector);
+
+
+
 export default huntingSlice.reducer;
 
-export {useEndpointSetLocation,useEndpointGetLocationOfMatch,useEndpointMatch,useDeactivateHunting}
+export {useEndpointSetLocation,useEndpointGetLocationOfMatch,useEndpointMatch,useDeactivateHunting,useEndpointVisible,useEndpointInvisible,useEndpointRegister}
