@@ -80,16 +80,10 @@ app.use(express.json());
 
 const handleResponseWrapper = <ResponseType>(res: Response, args: ResponseHandlerArgs<ResponseType>) => {
     const { payload, statusCode } = args;
-    const previousState = JSON.parse(JSON.stringify(clients));
     let actualPayload = payload;
     if (debug)
-        actualPayload = {...payload,state:previousState};
+        actualPayload = {...payload,state:clients};
     res.status(statusCode).send(actualPayload);
-    console.log({
-        action: args,
-        statePreExecution: previousState,
-        statePostExecution: clients
-    });
 };
 
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -154,7 +148,8 @@ app.post("/visible", (req: Request<VisibleRequest>, res: Response<VisibleRespons
 const cancelMatch = (client:Client) => {
     if (!client.activeMatchWith)
         return;
-    const match = clients.find(x=>x.activeMatchWith ===client.activeMatchWith && x.visible)
+    const match = clients.find(x=>x.name ===client.activeMatchWith)
+    console.log("Match:",match)
     if (!match) //match already disappeared
         return;
     
@@ -170,9 +165,14 @@ const cancelMatch = (client:Client) => {
 }
 app.post("/invisible", (req: Request<InvisibleRequest>, res: Response<InvisibleResponse>) => {
     const client = authenticate(req);
-    client.visible = false;
+
+    console.log("Client:",client)
 
     cancelMatch(client);
+
+    console.log("Canceled Match:",clients)
+
+    client.visible = false;
 
     res.handleResponse({
         payload: {
