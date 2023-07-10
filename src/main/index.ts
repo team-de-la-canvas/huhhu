@@ -4,36 +4,27 @@ import {
     ClientsRequest,
     ClientsResponse,
     VisibleRequest,
-    VisibleResponse, MatchesRequest, MatchesResponse,
-    MatchRequest, MatchResponse,
+    VisibleResponse,
+    MatchesRequest,
+    MatchesResponse,
+    MatchRequest,
+    MatchResponse,
     RegistrationRequest,
-    RegistrationResponse, SetLocationRequest, SetLocationResponse, InvisibleRequest, InvisibleResponse
+    RegistrationResponse,
+    SetLocationRequest,
+    SetLocationResponse,
+    InvisibleRequest,
+    InvisibleResponse,
+    CancelMatchRequest, CancelMatchResponse, GetLocationOfMatchRequest, GetLocationOfMatchResponse
 } from "../shared/routes";
 import {Client} from "../shared/models";
-import { v4 as uuid } from "uuid"
 import {randomUUID} from "crypto";
 
 
-const app = express();
-const port = 3000;
 
 
-type ResponseHandlerArgs<ResponseType> = {
-    payload: ResponseType;
-    statusCode: number;
-};
 
-const handleResponseWrapper = <ResponseType>(res: Response, args: ResponseHandlerArgs<ResponseType>) => {
-    const { payload, statusCode } = args;
-    const previousState = JSON.parse(JSON.stringify(clients));
-    res.status(statusCode).send(payload);
-    console.log({
-        action: args,
-        statePreExecution: previousState,
-        statePostExecution: clients
-    });
-};
-
+// ******************** Declarations ***********************//
 
 declare global {
     namespace Express {
@@ -42,34 +33,94 @@ declare global {
         }
     }
 }
+interface AuthenticatedRequest {
+    clientCode: number
+}
+class AuthError extends Error {
+    clientCode: string;
+
+    constructor(message: string, clientCode: string) {
+        super(message);
+        this.clientCode = clientCode;
+        // Set the prototype explicitly to maintain the inheritance chain
+        Object.setPrototypeOf(this, AuthError.prototype);
+    }
+}
+
+type ResponseHandlerArgs<ResponseType> = {
+    payload: ResponseType;
+    statusCode: number;
+};
+
+
+
+// ******************** Global state ***********************//
+
+
+
+const debug = process.env["debug"]==="true";
+
+
+
+let clients: Client[]  = [];
+
+
+const app = express();
+const port = 3000;
+
+
+
+
+
+// ******************** Pre Middleware ***********************//
 
 app.use(cors());
 app.use(express.json());
 
-// Middleware to extend the Response object prototype
+
+const handleResponseWrapper = <ResponseType>(res: Response, args: ResponseHandlerArgs<ResponseType>) => {
+    const { payload, statusCode } = args;
+    let actualPayload = payload;
+    if (debug)
+        actualPayload = {...payload,state:clients};
+    res.status(statusCode).send(actualPayload);
+};
+
 app.use((req: Request, res: Response, next: NextFunction) => {
     res.handleResponse = (args) => handleResponseWrapper(res, args);
     next();
 });
 
-// Custom middleware to handle exceptions
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-    // Handle the error and send a response to the client
-    res.status(500).json({ error: 'Internal Server Error' });
-    next();
-});
 
 
 
 
-let clients: Client[]  = [];
+// ******************** Utilities ***********************//
+
+
+
+const authenticate = (req: Request<AuthenticatedRequest>): Client => {
+    const clientCode = req.body.clientCode;
+    const client = clients.find(client => client.code===clientCode);
+    if (!client){
+        throw new AuthError("authentication failed", clientCode);
+    }
+    return client;
+}
+
+
+
+// ******************** Routes ***********************//
+
 
 // returns on successful login a code for which is used to authenticate clients for future requests
 app.post("/reg", (req: Request<RegistrationRequest>, res: Response<RegistrationResponse | string>) => {
     const clientName = req.body.clientName;
     if (!clientName || clients.find(cl => cl.name === clientName)) {
         res.handleResponse({
-            payload: "Error registering under this clientName. Potentially already registered.",
+            payload: {
+                message: "Error registering under this clientName. Potentially already registered."
+            },
             statusCode: 400
         });
         return;
@@ -84,19 +135,7 @@ app.post("/reg", (req: Request<RegistrationRequest>, res: Response<RegistrationR
 })
 
 app.post("/visible", (req: Request<VisibleRequest>, res: Response<VisibleResponse>) => {
-    const clientCode = req.body.clientCode;
-
-    const options = clients.filter(client => client.code===clientCode);
-    if (options.length !== 1){
-        res.handleResponse({
-            payload: {
-                message:"error, wrong code"
-            },
-            statusCode: 400
-        })
-        return;
-    }
-    const client = options[0];
+    const client = authenticate(req);
     client.visible = true;
 
     res.handleResponse({
@@ -106,21 +145,33 @@ app.post("/visible", (req: Request<VisibleRequest>, res: Response<VisibleRespons
         statusCode: 200
     });
 });
-
-app.post("/invisible", (req: Request<InvisibleRequest>, res: Response<InvisibleResponse>) => {
-    const clientCode = req.body.clientCode;
-
-    const options = clients.filter(client => client.code===clientCode);
-    if (options.length !== 1){
-        res.handleResponse({
-            payload: {
-                message:"error, wrong code"
-            },
-            statusCode: 400
-        })
+const cancelMatch = (client:Client) => {
+    if (!client.activeMatchWith)
         return;
+    const match = clients.find(x=>x.name ===client.activeMatchWith)
+    console.log("Match:",match)
+    if (!match) //match already disappeared
+        return;
+    
+    client.activeMatchWith = undefined;
+    match.activeMatchWith = undefined;
+    match.piggyBack = {
+        id: randomUUID(),
+        type: "matchCanceled",
+        payload: {
+            message: "match has stopped"
+        }
     }
-    const client = options[0];
+}
+app.post("/invisible", (req: Request<InvisibleRequest>, res: Response<InvisibleResponse>) => {
+    const client = authenticate(req);
+
+    console.log("Client:",client)
+
+    cancelMatch(client);
+
+    console.log("Canceled Match:",clients)
+
     client.visible = false;
 
     res.handleResponse({
@@ -133,13 +184,22 @@ app.post("/invisible", (req: Request<InvisibleRequest>, res: Response<InvisibleR
 
 
 app.post("/match", (req: Request<MatchRequest>, res: Response<MatchResponse>) => { //the client that wants to match with randomly chosen other client needs to provide their own code for authorization.
-    const clientCode = req.body.clientCode;
-    const otherClient = clients.find(cl => cl.visible && !cl.code !== clientCode);
-    const thisClient = clients.find(cl => cl.visible && cl.code === clientCode);
+    const thisClient = authenticate(req);
+    if (!thisClient.visible){
+        res.handleResponse({
+            statusCode: 400,
+            payload:{
+                message: "You need to be visible, in order to match"
+            }
+        });
+        return;
+    }
+    
+    const otherClient = clients.find(cl => cl.visible && cl.code !== thisClient.code && cl.activeMatchWith === undefined);
     
     if (!otherClient){
         res.handleResponse({
-            statusCode: 500,
+            statusCode: 404,
             payload:{
                 message: "No match available"
             }
@@ -147,7 +207,7 @@ app.post("/match", (req: Request<MatchRequest>, res: Response<MatchResponse>) =>
         return;
     }
 
-    if (thisClient && otherClient && thisClient.name !== otherClient.name) {
+    if (thisClient.name !== otherClient.name) {
         thisClient.activeMatchWith = otherClient.name;
         otherClient.activeMatchWith = thisClient.name;
         
@@ -155,7 +215,8 @@ app.post("/match", (req: Request<MatchRequest>, res: Response<MatchResponse>) =>
             id: randomUUID(),
             type: "matchStarted",
             payload: {
-                matchName: thisClient.name
+                matchName: thisClient.name,
+                message: "match has started"
             }
         }
         
@@ -176,6 +237,23 @@ app.post("/match", (req: Request<MatchRequest>, res: Response<MatchResponse>) =>
             statusCode: 400
         });
     }
+})
+
+app.post("/cancelMatch", (req: Request<CancelMatchRequest>, res: Response<CancelMatchResponse>) => {
+    const client = authenticate(req)
+    const match = clients.find(cl=>cl.name === client.activeMatchWith);
+    if (!match){
+        res.handleResponse({
+            payload: {
+                message: "You cannot cancel a match, that doesnt exist!",
+                matchName: undefined
+            },
+            statusCode: 400
+        });
+        return;
+    }
+    
+    cancelMatch(client);
 })
 
 app.get("/clients", (req: Request<ClientsRequest>, res:Response<ClientsResponse>) => {
@@ -212,35 +290,46 @@ app.get("/matches", (req: Request<MatchesRequest>,res:Response<MatchesResponse>)
 
 
 app.post("/setLocation", (req: Request<SetLocationRequest>, res: Response<SetLocationResponse>) => { 
-    const clientCode = req.body.clientCode;
-    const thisClient = clients.find(cl => cl.visible && cl.code === clientCode);
-    if (thisClient)
-    {
-        res.handleResponse({
-            payload: {
-                clientLocation: req.body.clientLocation,
-                piggyBack: thisClient.piggyBack
-            },
-            statusCode: 200
-        });
-    } else {
-        res.handleResponse({
-            payload: {
-                message: "Client not registered yet"
-            },
-            statusCode: 400
-        });
-    }
+    const client = authenticate(req)
+
+    const newLocation = req.body.clientLocation; 
+    client.location =newLocation; 
+    res.handleResponse({
+        payload: {
+            clientLocation: newLocation,
+            piggyBack: client.piggyBack
+        },
+        statusCode: 200
+    });
     
 })
 
 
-app.post("/getLocationOfMatch", (req, res) => {
-    const clientCode = req.body.clientCode;
-    const thisClient = clients.find(cl => cl.visible && cl.code === clientCode);
-    console.log("this client: ",thisClient)
-    const otherClient = clients.find(cl => cl.visible && cl.activeMatchWith === thisClient.name);
-    console.log("other client: ",otherClient)
+app.post("/getLocationOfMatch", (req: Request<GetLocationOfMatchRequest>, res: Response<GetLocationOfMatchResponse>) => {
+    const client = authenticate(req);
+    if (!client.visible){
+        res.handleResponse({
+            statusCode: 400,
+            payload:{
+                message: "You need to be visible in order to get the location of your match"
+            }
+        });
+        return;
+    }
+    
+    
+    const otherClient = clients.find(cl => cl.visible && cl.activeMatchWith === client.name);
+    
+    if (!otherClient || otherClient.location === undefined){
+        res.handleResponse({
+            statusCode: 404,
+            payload:{
+                message: "No location found"
+            }
+        });
+        return;
+    }
+    
     res.handleResponse({
         payload: {
             clientLocation:otherClient.location
@@ -256,6 +345,25 @@ app.post("/debugSetState", (req : Request<Client[]>, res : Response<Client[]>) =
         statusCode: 200
     })
 });
+
+
+// ******************** Post Middleware ***********************//
+
+
+app.use((err, req: Request, res: Response, next: NextFunction) => {
+    if (!err) return next();
+    if (err instanceof AuthError) {
+        res.status(403).json({ error: `Authentication failed with clientCode: ${err.clientCode}` });
+    } else {
+        res.status(500).json({ error: `Internal Server Error: ${err.message}` });
+    }
+});
+
+
+
+// ******************** Main LOOP ***********************//
+
+
 
 app.listen(port, '0.0.0.0', () => {
     console.log(`App listening at http://0.0.0.0:${port}`);
