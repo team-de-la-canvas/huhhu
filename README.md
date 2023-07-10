@@ -9,7 +9,7 @@ sequenceDiagram
     UI ->> HuntingSlice: Dispatch Match({onFailure, onSucess})
     HuntingSlice ->> ApiSlice: Dispatch Post Request ({match, url, onSuccess, onFailure})
     ApiSlice ->> API: Http POST api/match {payload}
-    ApiSlice->>ApiSlice: pending
+    ApiSlice->>ApiSlice: api/post/pending
     alt X time later: Failed
         API->>ApiSlice: HTTP POST Response {error}
         ApiSlice->>ApiSlice: api/post/rejected
@@ -29,7 +29,7 @@ sequenceDiagram
     end
 ```
 
-### Async Thunk: (the thing beeing dispatched)
+### Async Thunk: (the thing being dispatched)
 `state/huntingSlice.ts`
 ```typescript
 export const match = ({onFailure }:ActionArgs<{ }>) => post<MatchRequest,MatchResponse>({
@@ -49,7 +49,7 @@ export const match = ({onFailure }:ActionArgs<{ }>) => post<MatchRequest,MatchRe
 ```
 
 
-### Reducer (the thing beeing combined with state):
+### Reducer (the thing combining updates with state):
 `state/huntingSlice.ts`
 ```typescript
 const huntingSlice = createSlice({

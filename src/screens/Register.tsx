@@ -1,18 +1,20 @@
 import React, {useEffect, useState} from "react";
 import {Button, SafeAreaView, StyleSheet, Text, TextInput, View} from "react-native";
-import {useDispatch} from "react-redux";
 import {AppDispatch} from "../state/store";
-import { register } from "../state/authSlice";
-import {flashError} from "../services/flasher";
+import {flashError, flashSuccess} from "../services/flasher";
+import {useEndpointRegister} from "../state/authSlice";
 // import {useSnackbar} from "notistack";
 
 export default function Register(){
-    const dispatch:AppDispatch = useDispatch();
     const [username, setUserName] = useState("");
-    // const {enqueueSnackbar, closeSnackbar} = useSnackbar();
-    useEffect(()=>{
-        flashError("test")
-    },[]);
+
+
+    const register = useEndpointRegister({
+        onFailure: flashError,
+        onSuccess: () => flashSuccess(`Successfully Logged in as ${username}!`)
+    });
+    
+    
     return(
         <View style={styles.container}>
             <View style={styles.card}>
@@ -26,12 +28,9 @@ export default function Register(){
                             onChangeText={text => setUserName(text)}
                         />
                     </View>
-                    <Button onPress={()=>{
-                        dispatch(register({
-                            args: {username},
-                            onFailure: flashError
-                        }));
-                    }} title={"Register"}/>
+                    <Button onPress={()=>register({
+                        clientName: username
+                    })} title={"Register"}/>
                 </View>
             </View>
         </View>
