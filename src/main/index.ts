@@ -4,10 +4,18 @@ import {
     ClientsRequest,
     ClientsResponse,
     VisibleRequest,
-    VisibleResponse, MatchesRequest, MatchesResponse,
-    MatchRequest, MatchResponse,
+    VisibleResponse,
+    MatchesRequest,
+    MatchesResponse,
+    MatchRequest,
+    MatchResponse,
     RegistrationRequest,
-    RegistrationResponse, SetLocationRequest, SetLocationResponse, InvisibleRequest, InvisibleResponse
+    RegistrationResponse,
+    SetLocationRequest,
+    SetLocationResponse,
+    InvisibleRequest,
+    InvisibleResponse,
+    CancelMatchRequest, CancelMatchResponse, GetLocationOfMatchRequest, GetLocationOfMatchResponse
 } from "../shared/routes";
 import {Client} from "../shared/models";
 import {randomUUID} from "crypto";
@@ -59,6 +67,11 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 // Custom middleware to handle exceptions
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     // Handle the error and send a response to the client
+    if (err instanceof AuthError) {
+        res.status(403).json({ error: `Authentication failed with clientCode: ${err.clientCode}` });
+        next();
+        return;
+    }
     res.status(500).json({ error: 'Internal Server Error' });
     next();
 });
@@ -67,6 +80,28 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 
 
 let clients: Client[]  = [];
+interface AuthenticatedRequest {
+    clientCode: number
+}
+class AuthError extends Error {
+    clientCode: string;
+
+    constructor(message: string, clientCode: string) {
+        super(message);
+        this.clientCode = clientCode;
+        // Set the prototype explicitly to maintain the inheritance chain
+        Object.setPrototypeOf(this, AuthError.prototype);
+    }
+}
+
+const authenticate = (req: Request<AuthenticatedRequest>): Client => {
+    const clientCode = req.body.clientCode;
+    const client = clients.find(client => client.code===clientCode);
+    if (!client){
+        throw new AuthError("authentication failed", clientCode);
+    }
+    return client;
+} 
 
 // returns on successful login a code for which is used to authenticate clients for future requests
 app.post("/reg", (req: Request<RegistrationRequest>, res: Response<RegistrationResponse | string>) => {
@@ -90,19 +125,7 @@ app.post("/reg", (req: Request<RegistrationRequest>, res: Response<RegistrationR
 })
 
 app.post("/visible", (req: Request<VisibleRequest>, res: Response<VisibleResponse>) => {
-    const clientCode = req.body.clientCode;
-
-    const options = clients.filter(client => client.code===clientCode);
-    if (options.length !== 1){
-        res.handleResponse({
-            payload: {
-                message:"error, wrong code"
-            },
-            statusCode: 400
-        })
-        return;
-    }
-    const client = options[0];
+    const client = authenticate(req);
     client.visible = true;
 
     res.handleResponse({
@@ -114,20 +137,10 @@ app.post("/visible", (req: Request<VisibleRequest>, res: Response<VisibleRespons
 });
 
 app.post("/invisible", (req: Request<InvisibleRequest>, res: Response<InvisibleResponse>) => {
-    const clientCode = req.body.clientCode;
-
-    const options = clients.filter(client => client.code===clientCode);
-    if (options.length !== 1){
-        res.handleResponse({
-            payload: {
-                message:"error, wrong code"
-            },
-            statusCode: 400
-        })
-        return;
-    }
-    const client = options[0];
+    const client = authenticate(req);
     client.visible = false;
+
+    cancelMatch(client);
 
     res.handleResponse({
         payload: {
@@ -139,9 +152,18 @@ app.post("/invisible", (req: Request<InvisibleRequest>, res: Response<InvisibleR
 
 
 app.post("/match", (req: Request<MatchRequest>, res: Response<MatchResponse>) => { //the client that wants to match with randomly chosen other client needs to provide their own code for authorization.
-    const clientCode = req.body.clientCode;
-    const otherClient = clients.find(cl => cl.visible && !cl.code !== clientCode && cl.activeMatchWith === undefined);
-    const thisClient = clients.find(cl => cl.visible && cl.code === clientCode);
+    const thisClient = authenticate(req);
+    if (!thisClient.visible){
+        res.handleResponse({
+            statusCode: 400,
+            payload:{
+                message: "You need to be visible, in order to match"
+            }
+        });
+        return;
+    }
+    
+    const otherClient = clients.find(cl => cl.visible && cl.code !== thisClient.code && cl.activeMatchWith === undefined);
     
     if (!otherClient){
         res.handleResponse({
@@ -153,7 +175,7 @@ app.post("/match", (req: Request<MatchRequest>, res: Response<MatchResponse>) =>
         return;
     }
 
-    if (thisClient && otherClient && thisClient.name !== otherClient.name) {
+    if (thisClient.name !== otherClient.name) {
         thisClient.activeMatchWith = otherClient.name;
         otherClient.activeMatchWith = thisClient.name;
         
@@ -218,38 +240,35 @@ app.get("/matches", (req: Request<MatchesRequest>,res:Response<MatchesResponse>)
 
 
 app.post("/setLocation", (req: Request<SetLocationRequest>, res: Response<SetLocationResponse>) => { 
-    const clientCode = req.body.clientCode;
-    const thisClient = clients.find(cl => cl.code === clientCode);
-    if (thisClient)
-    {
-        const newLocation = req.body.clientLocation; 
-        
-        thisClient.location =newLocation; 
-        res.handleResponse({
-            payload: {
-                clientLocation: newLocation,
-                piggyBack: thisClient.piggyBack
-            },
-            statusCode: 200
-        });
-    } else {
-        res.handleResponse({
-            payload: {
-                message: "Client not registered yet"
-            },
-            statusCode: 400
-        });
-    }
+    const client = authenticate(req)
+
+    const newLocation = req.body.clientLocation; 
+    client.location =newLocation; 
+    res.handleResponse({
+        payload: {
+            clientLocation: newLocation,
+            piggyBack: client.piggyBack
+        },
+        statusCode: 200
+    });
     
 })
 
 
-app.post("/getLocationOfMatch", (req, res) => {
-    const clientCode = req.body.clientCode;
-    const thisClient = clients.find(cl => cl.visible && cl.code === clientCode);
-    console.log("this client: ",thisClient)
-    const otherClient = clients.find(cl => cl.visible && cl.activeMatchWith === thisClient.name);
-    console.log("other client: ",otherClient)
+app.post("/getLocationOfMatch", (req: Request<GetLocationOfMatchRequest>, res: Response<GetLocationOfMatchResponse>) => {
+    const client = authenticate(req);
+    if (!client.visible){
+        res.handleResponse({
+            statusCode: 400,
+            payload:{
+                message: "You need to be visible in order to get the location of your match"
+            }
+        });
+        return;
+    }
+    
+    
+    const otherClient = clients.find(cl => cl.visible && cl.activeMatchWith === client.name);
     
     if (!otherClient || otherClient.location === undefined){
         res.handleResponse({
