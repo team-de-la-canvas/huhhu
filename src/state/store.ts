@@ -1,8 +1,6 @@
 import {configureStore, ThunkAction, Action, Dispatch, combineReducers, getDefaultMiddleware} from '@reduxjs/toolkit';
-import userReducer from './userSlice';
 import authReducer from './authSlice'
 import huntingReducer from './huntingSlice';
-import apiReducer from  './apiSlice'
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 // import { persistReducer, persistStore } from 'redux-persist';
 
@@ -24,9 +22,7 @@ import apiReducer from  './apiSlice'
 const store = configureStore({
     reducer: {
         auth: authReducer, //persistedAuthReducer,
-        user: userReducer,
         hunting: huntingReducer,
-        api: apiReducer,
     },
     // middleware: defaultMiddleware
 });

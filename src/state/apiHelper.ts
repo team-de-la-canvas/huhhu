@@ -10,10 +10,10 @@ import {AppDispatch, RootState} from "./store";
 import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
 import {apiUrl} from "./config";
-import {callApi} from "./apiSlice";
 import {v4 as uuid} from "uuid"
 import {MatchStartedPiggyBagPayload, ResponsePiggyBag} from "../shared/models";
 import {flashError} from "../services/flasher";
+import axios, {AxiosError, AxiosResponse} from "axios";
 
 
 
@@ -33,6 +33,22 @@ interface ApiState<Response> {
 
 export type ApiStates = { [path: string]: ApiState<any> }
 
+export const callApi = async (
+    url: string,
+    method: string,
+    payload?: any
+): Promise<any> => {
+    try {
+        const response: AxiosResponse = await axios.request({
+            url,
+            method,
+            data: payload,
+        });
+        return response.data;
+    } catch (error) {
+        throw (error as AxiosError).response?.data || error;
+    }
+};
 
 const fetchedBags: uuid[] = [];
 
