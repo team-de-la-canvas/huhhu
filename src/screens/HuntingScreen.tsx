@@ -19,7 +19,7 @@ const HuntingScreen = () => {
     const myLocation = useSelector((state: RootState) => state.hunting.myLocation);
     const otherLocation = useSelector((state: RootState) => state.hunting.otherLocation);
     const huntingActive = useSelector((state:RootState) => state.hunting.huntingActive);
-    const clientCode = useSelector((state:RootState) => state.auth.code);
+    const clientCode = useSelector((state:RootState) => state.hunting.code);
     
     const setLocationEndpoint = useEndpointSetLocation({
         onSuccess: () => {},

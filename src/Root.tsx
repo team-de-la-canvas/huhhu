@@ -7,7 +7,7 @@ import {RootState} from "./state/store";
 // import {PersistGate} from "redux-persist/integration/react";
 
 export default function Root() {
-    const registered = useSelector((state:RootState) => state.auth.registered);
+    const registered = useSelector((state:RootState) => state.hunting.registered);
     return (
         <>
             {registered ? <Main /> : <Register />}

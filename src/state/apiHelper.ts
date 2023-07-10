@@ -10,10 +10,10 @@ import {AppDispatch, RootState} from "./store";
 import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
 import {apiUrl} from "./config";
-import {callApi} from "./apiSlice";
 import {v4 as uuid} from "uuid"
 import {MatchStartedPiggyBagPayload, ResponsePiggyBag} from "../shared/models";
 import {flashError} from "../services/flasher";
+import axios, {AxiosError, AxiosResponse} from "axios";
 
 
 
@@ -21,7 +21,7 @@ type ThunkParams<Request> = { url: string; payload: Request }
 
 type Callback = {
     onFailure: (error: string) => void,
-    onSuccess: () => void
+    onSuccess?: () => void
 }
 
 
@@ -33,6 +33,22 @@ interface ApiState<Response> {
 
 export type ApiStates = { [path: string]: ApiState<any> }
 
+export const callApi = async (
+    url: string,
+    method: string,
+    payload?: any
+): Promise<any> => {
+    try {
+        const response: AxiosResponse = await axios.request({
+            url,
+            method,
+            data: payload,
+        });
+        return response.data;
+    } catch (error) {
+        throw (error as AxiosError).response?.data || error;
+    }
+};
 
 const fetchedBags: uuid[] = [];
 
@@ -77,7 +93,8 @@ export const createHook = <RequestType>(actionCreator: ActionCreatorWithOptional
         return (request:RequestType) => dispatch(actionCreator(request));
     }
 }
-export const createApiHook = <RequestType,ResponseType>(urlPath: string,thunk: AsyncThunk<ResponseType,ThunkParams<RequestType>,any>,apiStatesSelector: (state:RootState)=>ApiStates, customSuccess?: ActionCreatorWithOptionalPayload<ResponseType, string>, piggyPackingCases: PiggyPackingCase[] = []) => {
+type SuccessfulPayloadCallback<ResponseType> = (dispatch:AppDispatch, payload: ResponseType) => void
+export const createApiHook = <RequestType,ResponseType>(urlPath: string,thunk: AsyncThunk<ResponseType,ThunkParams<RequestType>,any>,apiStatesSelector: (state:RootState)=>ApiStates, customSuccess?: SuccessfulPayloadCallback<ResponseType>, piggyPackingCases: PiggyPackingCase[] = []) => {
     return (callback: Callback) => {
         const dispatch:AppDispatch = useDispatch();
         const piggyBacking = usePiggyPacking(piggyPackingCases);
@@ -102,9 +119,10 @@ export const createApiHook = <RequestType,ResponseType>(urlPath: string,thunk: A
             if (status.error) {
                 callback.onFailure(status.error);
             } else {
-                callback.onSuccess();
+                if (callback.onSuccess)
+                    callback.onSuccess();
                 if (customSuccess)
-                    dispatch(customSuccess(status.data));
+                    customSuccess(dispatch,status.data);
                 piggyBacking(status.data.piggyBack);
             }
 
