@@ -105,7 +105,7 @@ const HuntingScreen = () => {
                 <VisibilitySwitch />
             </View>
             {/* MID */}
-            <View style={{ flex: 7 }}>
+            <View style={{ flex: 7, justifyContent: 'center', alignItems: 'center', overflow: 'hidden' }}>
                 {huntingActive ? <HuntingActiveScenario /> : <SearchingActiveScenario />}
             </View>
             {/* BOT */}

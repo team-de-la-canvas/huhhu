@@ -8,7 +8,7 @@ import {LocationModel} from "../shared/models";
 import {
     ApiStates,
     createApiBuilder,
-    createApiHook,
+    createApiHook, createHook,
     createPOSTApiAsyncThunk,
     initialApiState
 } from "./apiHelper";
@@ -53,6 +53,7 @@ const huntingSlice = createSlice({
         },
         setMatch(state, action: PayloadAction<MatchResponse>){
             state.matchName = action.payload.matchName
+            state.huntingActive = true;
         }
     },
     extraReducers: builder => {
@@ -78,6 +79,8 @@ const useEndpointSetLocation = createApiHook("/setLocation",setLocation,apiState
     }
 }])
 const useEndpointGetLocationOfMatch = createApiHook("/getLocationOfMatch",getLocationOfMatch,apiStatesSelector)
+
+const useDeactivateHunting = createHook(huntingSlice.actions.deactivateHunting);
 export default huntingSlice.reducer;
 
-export {useEndpointSetLocation,useEndpointGetLocationOfMatch,useEndpointMatch}
+export {useEndpointSetLocation,useEndpointGetLocationOfMatch,useEndpointMatch,useDeactivateHunting}

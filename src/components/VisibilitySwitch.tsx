@@ -4,23 +4,28 @@ import {useEndpointInvisible, useEndpointVisible} from "../state/authSlice";
 import {flashError} from "../services/flasher";
 import {useSelector} from "react-redux";
 import {RootState} from "../state/store";
+import {useDeactivateHunting} from "../state/huntingSlice";
 
 const VisibilitySwitch = () => {
 
-    const toggleSwitch = () => {
+    const [visibilitySwitchEnabled, setVisibilitySwitchEnabled] = useState(false);
+    const deactivateHunting = useDeactivateHunting();
+    const toggleSwitchCallback = () => {
         setVisibilitySwitchEnabled((previousState) => !previousState);
+        if (visibilitySwitchEnabled){
+            deactivateHunting();
+        }
     };
     
     const clientCode = useSelector((state:RootState) => state.auth.code)
     
-    const [visibilitySwitchEnabled, setVisibilitySwitchEnabled] = useState(false);
     const visible = useEndpointVisible({
         onFailure: flashError,
-        onSuccess: toggleSwitch
+        onSuccess: toggleSwitchCallback
     });
     const invisible = useEndpointInvisible({
         onFailure: flashError,
-        onSuccess: toggleSwitch
+        onSuccess: toggleSwitchCallback
     });
     
     
