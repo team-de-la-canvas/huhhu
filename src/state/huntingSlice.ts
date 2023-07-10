@@ -44,9 +44,9 @@ const initialState: HuntingState = {
     visible: false,
     registered: false,
     apiStates: {
-        match: initialApiState,
-        setLocation: initialApiState,
-        getLocationOfMatch: initialApiState,
+        match: {...initialApiState},
+        setLocation: {...initialApiState},
+        getLocationOfMatch: {...initialApiState},
         register: {...initialApiState},
         visible: {...initialApiState},
         invisible: {...initialApiState}
