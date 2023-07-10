@@ -20,17 +20,63 @@ import {
 import {Client} from "../shared/models";
 import {randomUUID} from "crypto";
 
+
+
+
+
+// ******************** Declarations ***********************//
+
+declare global {
+    namespace Express {
+        interface Response {
+            handleResponse: <ResponseType>(args: ResponseHandlerArgs<ResponseType>) => void;
+        }
+    }
+}
+interface AuthenticatedRequest {
+    clientCode: number
+}
+class AuthError extends Error {
+    clientCode: string;
+
+    constructor(message: string, clientCode: string) {
+        super(message);
+        this.clientCode = clientCode;
+        // Set the prototype explicitly to maintain the inheritance chain
+        Object.setPrototypeOf(this, AuthError.prototype);
+    }
+}
+
+type ResponseHandlerArgs<ResponseType> = {
+    payload: ResponseType;
+    statusCode: number;
+};
+
+
+
+// ******************** Global state ***********************//
+
+
+
 const debug = process.env["debug"]==="true";
+
+
+
+let clients: Client[]  = [];
 
 
 const app = express();
 const port = 3000;
 
 
-type ResponseHandlerArgs<ResponseType> = {
-    payload: ResponseType;
-    statusCode: number;
-};
+
+
+
+// ******************** Pre Middleware ***********************//
+
+app.use(cors());
+app.use(express.json());
+
 
 const handleResponseWrapper = <ResponseType>(res: Response, args: ResponseHandlerArgs<ResponseType>) => {
     const { payload, statusCode } = args;
@@ -46,53 +92,18 @@ const handleResponseWrapper = <ResponseType>(res: Response, args: ResponseHandle
     });
 };
 
-
-declare global {
-    namespace Express {
-        interface Response {
-            handleResponse: <ResponseType>(args: ResponseHandlerArgs<ResponseType>) => void;
-        }
-    }
-}
-
-app.use(cors());
-app.use(express.json());
-
-// Middleware to extend the Response object prototype
 app.use((req: Request, res: Response, next: NextFunction) => {
     res.handleResponse = (args) => handleResponseWrapper(res, args);
     next();
 });
 
-// Custom middleware to handle exceptions
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-    // Handle the error and send a response to the client
-    if (err instanceof AuthError) {
-        res.status(403).json({ error: `Authentication failed with clientCode: ${err.clientCode}` });
-        next();
-        return;
-    }
-    res.status(500).json({ error: 'Internal Server Error' });
-    next();
-});
 
 
 
 
-let clients: Client[]  = [];
-interface AuthenticatedRequest {
-    clientCode: number
-}
-class AuthError extends Error {
-    clientCode: string;
+// ******************** Utilities ***********************//
 
-    constructor(message: string, clientCode: string) {
-        super(message);
-        this.clientCode = clientCode;
-        // Set the prototype explicitly to maintain the inheritance chain
-        Object.setPrototypeOf(this, AuthError.prototype);
-    }
-}
+
 
 const authenticate = (req: Request<AuthenticatedRequest>): Client => {
     const clientCode = req.body.clientCode;
@@ -101,7 +112,12 @@ const authenticate = (req: Request<AuthenticatedRequest>): Client => {
         throw new AuthError("authentication failed", clientCode);
     }
     return client;
-} 
+}
+
+
+
+// ******************** Routes ***********************//
+
 
 // returns on successful login a code for which is used to authenticate clients for future requests
 app.post("/reg", (req: Request<RegistrationRequest>, res: Response<RegistrationResponse | string>) => {
@@ -329,6 +345,25 @@ app.post("/debugSetState", (req : Request<Client[]>, res : Response<Client[]>) =
         statusCode: 200
     })
 });
+
+
+// ******************** Post Middleware ***********************//
+
+
+app.use((err, req: Request, res: Response, next: NextFunction) => {
+    if (!err) return next();
+    if (err instanceof AuthError) {
+        res.status(403).json({ error: `Authentication failed with clientCode: ${err.clientCode}` });
+    } else {
+        res.status(500).json({ error: `Internal Server Error: ${err.message}` });
+    }
+});
+
+
+
+// ******************** Main LOOP ***********************//
+
+
 
 app.listen(port, '0.0.0.0', () => {
     console.log(`App listening at http://0.0.0.0:${port}`);
