@@ -135,7 +135,23 @@ app.post("/visible", (req: Request<VisibleRequest>, res: Response<VisibleRespons
         statusCode: 200
     });
 });
-
+const cancelMatch = (client:Client) => {
+    if (!client.activeMatchWith)
+        return;
+    const match = clients.find(x=>x.activeMatchWith ===client.activeMatchWith && x.visible)
+    if (!match) //match already disappeared
+        return;
+    
+    client.activeMatchWith = undefined;
+    match.activeMatchWith = undefined;
+    match.piggyBack = {
+        id: randomUUID(),
+        type: "matchCanceled",
+        payload: {
+            message: "match has stopped"
+        }
+    }
+}
 app.post("/invisible", (req: Request<InvisibleRequest>, res: Response<InvisibleResponse>) => {
     const client = authenticate(req);
     client.visible = false;
@@ -183,7 +199,8 @@ app.post("/match", (req: Request<MatchRequest>, res: Response<MatchResponse>) =>
             id: randomUUID(),
             type: "matchStarted",
             payload: {
-                matchName: thisClient.name
+                matchName: thisClient.name,
+                message: "match has started"
             }
         }
         
@@ -204,6 +221,23 @@ app.post("/match", (req: Request<MatchRequest>, res: Response<MatchResponse>) =>
             statusCode: 400
         });
     }
+})
+
+app.post("/cancelMatch", (req: Request<CancelMatchRequest>, res: Response<CancelMatchResponse>) => {
+    const client = authenticate(req)
+    const match = clients.find(cl=>cl.name === client.activeMatchWith);
+    if (!match){
+        res.handleResponse({
+            payload: {
+                message: "You cannot cancel a match, that doesnt exist!",
+                matchName: undefined
+            },
+            statusCode: 400
+        });
+        return;
+    }
+    
+    cancelMatch(client);
 })
 
 app.get("/clients", (req: Request<ClientsRequest>, res:Response<ClientsResponse>) => {
