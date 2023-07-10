@@ -183,7 +183,7 @@ app.post("/match", (req: Request<MatchRequest>, res: Response<MatchResponse>) =>
     
     if (!otherClient){
         res.handleResponse({
-            statusCode: 500,
+            statusCode: 404,
             payload:{
                 message: "No match available"
             }
