@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Button, SafeAreaView, StyleSheet, Text, TextInput, View} from "react-native";
 import {AppDispatch} from "../state/store";
 import {flashError, flashSuccess} from "../services/flasher";
-import {useEndpointRegister} from "../state/authSlice";
+import {useEndpointRegister} from "../state/huntingSlice";
 // import {useSnackbar} from "notistack";
 
 export default function Register(){
