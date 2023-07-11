@@ -28,6 +28,7 @@ interface HuntingState extends  ApiStatesState {
     myMockedLocation: LocationModel
     mockedLocation: boolean,
     otherLocation: LocationModel,
+    northDegrees: number,
     huntingActive: boolean,
     matchName: string |undefined,
     name: string | null;
@@ -41,6 +42,7 @@ const initialState: HuntingState = {
     myMockedLocation: null, 
     mockedLocation: false,
     otherLocation: null,
+    northDegrees: 0,
     huntingActive: false,
     matchName: undefined,
     name: null,
@@ -89,6 +91,9 @@ const huntingSlice = createSlice({
         },
         disableMockLocation(state){
             state.mockedLocation = false
+        },
+        setNorthDegrees(state, action: PayloadAction<number>){
+            state.northDegrees = action.payload
         }
     },
     extraReducers: builder => {
@@ -159,6 +164,8 @@ const useSetMockLocation = createHook(huntingSlice.actions.setMockLocation);
 const useEnableMockLocation = createHook(huntingSlice.actions.enableMockLocation);
 const useDisableMockLocation = createHook(huntingSlice.actions.disableMockLocation);
 
+const useSetNorthDegrees = createHook(huntingSlice.actions.setNorthDegrees);
+
 type HuntingStateKeySelectorWithoutApiStates = (state: Omit<HuntingState, 'apiStates'>) => any;
 export const useHuntingSelector = (selector: HuntingStateKeySelectorWithoutApiStates) =>
     useSelector((root: RootState) => selector(root.hunting));
@@ -173,5 +180,6 @@ export {
     useEndpointRegister,
     useSetMockLocation,
     useEnableMockLocation,
-    useDisableMockLocation
+    useDisableMockLocation,
+    useSetNorthDegrees
 }

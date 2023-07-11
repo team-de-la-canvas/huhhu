@@ -1,26 +1,38 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Animated, Easing, StyleSheet, Text, Image } from 'react-native';
-import { useHuntingSelector } from "../state/huntingSlice";
+import {useHuntingSelector, useSetNorthDegrees} from "../state/huntingSlice";
 
 const Pointer = () => {
-    const rotation = useRef(new Animated.Value(0)).current;
-    const [valid, setValid] = useState(false);
+    const setNorthDegrees =  useSetNorthDegrees();
+    const degrees = useHuntingSelector(x=>x.northDegrees)
+    const rotation = useRef(new Animated.Value(degrees)).current;
 
     const myLocation = useHuntingSelector(state => state.myLocation);
     const otherLocation = useHuntingSelector(state => state.otherLocation);
 
+    const huntingActive = useHuntingSelector(state => state.huntingActive);
+    
+    const resourceLock = useRef(false);
+    useEffect(()=>{
+        console.log("entire component reloaded")
+    },[]);
+
     useEffect(() => {
         if (myLocation && otherLocation) {
-            setValid(true);
-            const angleDeg = calculateAngle();
-            Animated.timing(rotation, {
-                toValue: angleDeg,
-                duration: 2000,
-                easing: Easing.linear,
-                useNativeDriver: true,
-            }).start();
-        } else {
-            setValid(false);
+            if (!resourceLock.current) {
+                resourceLock.current = true
+
+                const angleDeg = calculateAngle();
+                Animated.timing(rotation, {
+                    toValue: angleDeg,
+                    duration: 2000,
+                    easing: Easing.linear,
+                    useNativeDriver: true,
+                }).start(() => {
+                    setNorthDegrees(angleDeg);
+                    resourceLock.current = false;
+                });
+            }
         }
     }, [myLocation, otherLocation]);
 
@@ -35,19 +47,26 @@ const Pointer = () => {
         console.log("calculated angle: ", brng);
         return brng;
     }
-
+    
+    const isRotationPossible = ():boolean => otherLocation && myLocation;
     const Animation = () => (
-        <Animated.View style={[styles.animationContainer, { transform: [{ rotate: rotation.interpolate({
-                    inputRange: [0, 360],
-                    outputRange: ['0deg', '360deg']
-                }) }] }]}>
+        <Animated.View style={[styles.animationContainer, { 
+            transform: [
+                { 
+                    rotate: rotation.interpolate({
+                        inputRange: [0, 360],
+                        outputRange: ['0deg', '360deg']
+                    }) 
+                }
+            ] 
+        }]}>
             <Image source={require('../../assets/arrow-up.png')} style={{ width: 500, height: 500 }} />
         </Animated.View>
     );
 
     return (
         <>
-            {valid ? <Animation /> : <Text>No navigation possible</Text>}
+            {huntingActive ? <Animation /> : <Text>No navigation possible</Text>}
         </>
     );
 };
