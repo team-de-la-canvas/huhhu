@@ -11,82 +11,47 @@ import VisibilitySlider from "../components/VisibilitySlider";
 import VisibilitySwitch from "../components/VisibilitySwitch";
 
 const HuntingScreen = () => {
-    const dispatch: AppDispatch = useDispatch();
-
-    const [updateCounter,setUpdateCounter] = useState(0);
-    
-    
-    const myLocation = useSelector((state: RootState) => state.hunting.myLocation);
-    const otherLocation = useSelector((state: RootState) => state.hunting.otherLocation);
     const huntingActive = useSelector((state:RootState) => state.hunting.huntingActive);
     const clientCode = useSelector((state:RootState) => state.hunting.code);
-    
-    const setLocationEndpoint = useEndpointSetLocation({
-        onSuccess: () => {},
-        onFailure: flashError
-    });
-    
-    const getLocationOfMatchEndpoint = useEndpointGetLocationOfMatch({
-        onSuccess: () => {},
-        onFailure: flashError
-    })
-    
-    const matchEndpoint = useEndpointMatch({
-        onSuccess: () => flashSuccess("Successfully Matched!"),
-        onFailure: flashError
-    })
-    
-    useEffect(() => {
-        (async () => {
-            let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
-                flashError('Permission to access location was denied');
-                return;
-            }else {
-                let current = 0;
-                const locationSetterInterval = setInterval(() => {
-                    current++;
-                    const newUpdateCounterValue= current;
-                    setUpdateCounter(newUpdateCounterValue);
-                }, 5000);
 
-                return () => {
-                    clearInterval(locationSetterInterval);
-                }
-            }
-        })();
-    }, []);
     
+
+    console.log("Hunting screen rendered"); // Add this line to track re-renders
+
     useEffect(()=>{
-        Location.getCurrentPositionAsync({})
-            .then(location => {
-                setLocationEndpoint({
-                    clientCode,
-                    clientLocation: {
-                        latitude: location.coords.latitude,
-                        longitude: location.coords.longitude,   
-                    }
-                })
-            })
-            .catch(error =>{
-                flashError(error)
-            });
-        if (huntingActive){
-            getLocationOfMatchEndpoint({
-                clientCode
-            })
-        }
-    },[updateCounter]);
+        console.log("hunting screen reloaded")
+    },[])
+
+    useEffect(()=>{
+        console.log("hunting active changed to ",huntingActive)
+    },[huntingActive])
+
+    useEffect(()=>{
+        console.log("clientCode changed to ",clientCode)
+    },[clientCode])
+
+    
+    
     const HuntingActiveScenario = () => {
-        
+        console.log("hunting active scenario rendered")
+        useEffect(()=>{
+            console.log("hunting active scenario reloaded")
+        },[])
         return(
             <View style={styles.pointerScreen}>
-                <Pointer myLocation={myLocation} otherLocation={otherLocation}/>
+                <Pointer/>
             </View>
         )
     }
 
     const SearchingActiveScenario = () => {
+
+        const matchEndpoint = useEndpointMatch({
+            onSuccess: () => flashSuccess("Successfully Matched!"),
+            onFailure: flashError
+        })
+        
+        
         return(
             <View>
                 <Button title={"Match now!"} onPress={()=>{

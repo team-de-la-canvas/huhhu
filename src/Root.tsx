@@ -7,6 +7,7 @@ import {RootState} from "./state/store";
 // import {PersistGate} from "redux-persist/integration/react";
 
 export default function Root() {
+    console.log("Root rendered"); // Add this line to track re-renders
     const registered = useSelector((state:RootState) => state.hunting.registered);
     return (
         <>
