@@ -69,12 +69,26 @@ const app = express();
 const port = 3000;
 
 
+// Define the allowed origin
+const allowedOrigins = ['https://tome.app'];
+
+// Configure CORS options
+const corsOptions = {
+    origin: function (origin, callback) {
+        // Check if the origin is allowed or is undefined (for non-browser requests)
+        if (allowedOrigins.includes(origin) || !origin) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+};
 
 
 
 // ******************** Pre Middleware ***********************//
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 
