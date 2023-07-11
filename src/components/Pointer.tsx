@@ -39,7 +39,8 @@ const Pointer = () => {
     const calculateAngle = () => {
         const dLon = (otherLocation.longitude - myLocation.longitude);
         const y = Math.sin(dLon) * Math.cos(otherLocation.latitude);
-        const x = Math.cos(myLocation.latitude) * Math.sin(otherLocation.latitude) - Math.sin(myLocation.latitude) * Math.cos(otherLocation.latitude) * Math.cos(dLon);
+        const x = Math.cos(myLocation.latitude) * Math.sin(otherLocation.latitude) 
+            - Math.sin(myLocation.latitude) * Math.cos(otherLocation.latitude) * Math.cos(dLon);
         let brng = Math.atan2(y, x);
         brng = brng * (180 / Math.PI);  // convert from radians to degrees
         brng = (brng + 360) % 360;

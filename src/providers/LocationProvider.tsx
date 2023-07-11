@@ -12,6 +12,11 @@ const LocationProvider = () => {
     const clientCode = useSelector((state:RootState) => state.hunting.code);
 
 
+    useEffect(()=>{
+        console.log("location provider remounted")
+    },[])
+
+
     const setLocationEndpoint = useEndpointSetLocation({
         onSuccess: () => {},
         onFailure: flashError

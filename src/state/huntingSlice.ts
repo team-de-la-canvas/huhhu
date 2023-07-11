@@ -77,10 +77,12 @@ const huntingSlice = createSlice({
             state.myLocation = action.payload.clientLocation;
         },
         deactivateHunting(state){
+            console.log("deacivate match huntingActive")
             state.huntingActive = false
         },
         setMatch(state, action: PayloadAction<MatchResponse>){
             state.matchName = action.payload.matchName
+            console.log("setmatch change huntingActive")
             state.huntingActive = true;
         },
         setMockLocation(state, action: PayloadAction<LocationModel>){
@@ -100,6 +102,7 @@ const huntingSlice = createSlice({
         const apiBuilder = createApiBuilder(builder);
         apiBuilder.addEndpoint(match,(state, action) => {
             state.huntingActive = true
+            console.log("match endpoint success huntingActive")
         })
         apiBuilder.addEndpoint(setLocation, (state, action)=>{
 
@@ -138,6 +141,7 @@ const useEndpointSetLocation = createApiHook("/setLocation",setLocation,apiSelec
             applies: (piggyBag) => piggyBag.type==="matchStarted",
             resolve: (dispatch,piggyBag) => {
                 const payload = piggyBag.payload as MatchResponse;
+                console.log("resolve again")
                 dispatch(huntingSlice.actions.setMatch(payload))
                 flashSuccess("Match Started", `You successfully matched with ${payload.matchName}`)
             }

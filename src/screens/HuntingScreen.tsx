@@ -14,13 +14,26 @@ const HuntingScreen = () => {
     const huntingActive = useSelector((state:RootState) => state.hunting.huntingActive);
     const clientCode = useSelector((state:RootState) => state.hunting.code);
 
-    const matchEndpoint = useEndpointMatch({
-        onSuccess: () => flashSuccess("Successfully Matched!"),
-        onFailure: flashError
-    })
+    
+
+    console.log("Hunting screen rendered"); // Add this line to track re-renders
+
+    useEffect(()=>{
+        console.log("hunting screen reloaded")
+    },[])
+
+    useEffect(()=>{
+        console.log("hunting active changed to ",huntingActive)
+    },[huntingActive])
+
+    useEffect(()=>{
+        console.log("clientCode changed to ",clientCode)
+    },[clientCode])
+
     
     
     const HuntingActiveScenario = () => {
+        console.log("hunting active scenario rendered")
         useEffect(()=>{
             console.log("hunting active scenario reloaded")
         },[])
@@ -32,6 +45,13 @@ const HuntingScreen = () => {
     }
 
     const SearchingActiveScenario = () => {
+
+        const matchEndpoint = useEndpointMatch({
+            onSuccess: () => flashSuccess("Successfully Matched!"),
+            onFailure: flashError
+        })
+        
+        
         return(
             <View>
                 <Button title={"Match now!"} onPress={()=>{
