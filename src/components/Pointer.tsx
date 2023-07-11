@@ -43,11 +43,17 @@ const Pointer = () => {
         let brng = Math.atan2(y, x);
         brng = brng * (180 / Math.PI);  // convert from radians to degrees
         brng = (brng + 360) % 360;
-        brng = 360 - brng; // count degrees counter-clockwise - remove to make clockwise
+
+        // Determine the shortest angle
+        if (brng > 180) {
+            brng = 360 - brng; // Convert larger angles to their complementary smaller angles
+        }
+
         console.log("calculated angle: ", brng);
         return brng;
     }
-    
+
+
     const isRotationPossible = ():boolean => otherLocation && myLocation;
     const Animation = () => (
         <Animated.View style={[styles.animationContainer, { 
