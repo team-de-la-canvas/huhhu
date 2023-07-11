@@ -70,7 +70,7 @@ const port = 3000;
 
 
 // Define the allowed origin
-const allowedOrigins = ['https://tome.app'];
+const allowedOrigins = ['https://tome.app','https://web.huhhu.app','https://localhost:19006'];
 
 // Configure CORS options
 const corsOptions = {
