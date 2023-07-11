@@ -24,6 +24,9 @@ type Callback = {
     onSuccess?: () => void
 }
 
+export type ApiStatesState = {
+    apiStates: ApiStates
+}
 
 interface ApiState<Response> {
     data: Response | null;
@@ -59,6 +62,9 @@ type PiggyPackingCase = {
 const usePiggyPacking = (piggyPackingCases:PiggyPackingCase[]) => {
     
     const dispatch:AppDispatch = useDispatch()
+    if (!piggyPackingCases)
+        return (piggyBag: ResponsePiggyBag)=> {};
+    
     return (piggyBag: ResponsePiggyBag) => {
         
         if (!piggyBag)
@@ -94,16 +100,29 @@ export const createHook = <RequestType>(actionCreator: ActionCreatorWithOptional
     }
 }
 type SuccessfulPayloadCallback<ResponseType> = (dispatch:AppDispatch, payload: ResponseType) => void
-export const createApiHook = <RequestType,ResponseType>(urlPath: string,thunk: AsyncThunk<ResponseType,ThunkParams<RequestType>,any>,apiStatesSelector: (state:RootState)=>ApiStates, customSuccess?: SuccessfulPayloadCallback<ResponseType>, piggyPackingCases: PiggyPackingCase[] = []) => {
+
+type ApiHookOptions<RequestType,ResponseType,SliceType> = {
+    customSuccess?: SuccessfulPayloadCallback<ResponseType>, 
+    piggyPackingCases?: PiggyPackingCase[],
+    requestPayLoadTransformation?: ((payload:RequestType, sliceState:SliceType) => RequestType) 
+}
+
+export const createApiHook = <RequestType,ResponseType, SliceType extends ApiStatesState>(
+    urlPath: string,
+    thunk: AsyncThunk<ResponseType,ThunkParams<RequestType>,any>,
+    apiSelector: (state:RootState)=>SliceType,
+    options: ApiHookOptions<RequestType, ResponseType,SliceType>
+) => {
     return (callback: Callback) => {
         const dispatch:AppDispatch = useDispatch();
-        const piggyBacking = usePiggyPacking(piggyPackingCases);
+        const piggyBacking = usePiggyPacking(options.piggyPackingCases);
 
-        const status = useSelector((state: RootState) => apiStatesSelector(state)[thunk.typePrefix])
+        const status = useSelector((state: RootState) => apiSelector(state).apiStates[thunk.typePrefix])
 
         const [loadingGate,setLoadingGate] = useState(false);
         const [callCompleted, setCallCompleted] = useState(false);
 
+        const apiState = useSelector((state:RootState)=> apiSelector(state));
         
         useEffect(() => {
             if (status.loading) {
@@ -121,8 +140,8 @@ export const createApiHook = <RequestType,ResponseType>(urlPath: string,thunk: A
             } else {
                 if (callback.onSuccess)
                     callback.onSuccess();
-                if (customSuccess)
-                    customSuccess(dispatch,status.data);
+                if (options.customSuccess)
+                    options.customSuccess(dispatch,status.data);
                 piggyBacking(status.data.piggyBack);
             }
 
@@ -133,7 +152,7 @@ export const createApiHook = <RequestType,ResponseType>(urlPath: string,thunk: A
         
         return (request: RequestType) => dispatch(thunk({
             url: apiUrl+urlPath,
-            payload: request
+            payload: options.requestPayLoadTransformation?options.requestPayLoadTransformation(request,apiState): request
         }))
     };
 }
