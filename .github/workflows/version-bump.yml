@@ -2,7 +2,7 @@ name: Version Bump
 on:
   pull_request:
     types: [closed]
-    branches: [master, development]
+    branches: [master, develop]
 
 jobs:
   release:
