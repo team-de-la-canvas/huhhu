@@ -27,7 +27,7 @@ jobs:
         id: pr_analysis
         run: |
           PR_NUMBER=${{ github.event.pull_request.number }}
-          LABELS_JSON=$(gh pr view $PR_NUMBER --json labels -q '.labels.nodes')
+          LABELS_JSON=$(gh pr view $PR_NUMBER --json labels -q '.labels.nodes || []')
           if [[ "${{ github.event.pull_request.base.ref }}" == "master" ]] && echo "$LABELS_JSON" | grep -q '"name":"major"'; then
             echo "::set-output name=version_bump::major"
           elif [[ "${{ github.event.pull_request.base.ref }}" == "master" ]]; then
@@ -36,8 +36,9 @@ jobs:
             echo "::set-output name=version_bump::patch"
           fi
         env:
-          GH_TOKEN: ${{ secrets.VERSION_BUMP_PAT  }}
-
+          GH_TOKEN: ${{ secrets.VERSION_BUMP_PAT }}
+      
+      
       - name: Bump version and push tag
         id: package
         run: |
