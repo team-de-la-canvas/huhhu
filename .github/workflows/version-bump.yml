@@ -36,7 +36,7 @@ jobs:
             echo "::set-output name=version_bump::patch"
           fi
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.VERSION_BUMP_PAT  }}
 
       - name: Bump version and push tag
         id: package
