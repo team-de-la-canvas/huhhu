@@ -30,7 +30,8 @@ jobs:
         id: pr_analysis
         run: |
           PR_NUMBER=${{ github.event.pull_request.number }}
-          LABELS=$(curl --silent --location --request GET 'https://api.github.com/repos/${{ github.repository }}/pulls/'$PR_NUMBER'/labels' --header 'Authorization: Bearer $GH_TOKEN' | jq -r '.[].name')
+          PR_INFO=$(curl -L   -H "Accept: application/vnd.github+json"   -H "Authorization: Bearer $GH_TOKEN"  -H "X-GitHub-Api-Version: 2022-11-28"   https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER)
+          LABELS=$(echo PR_INFO | jq '.labels[].name)
           if [[ "${{ github.event.pull_request.base.ref }}" == "master" ]] && echo "$LABELS" | grep -q "major"; then
             echo "::set-output name=version_bump::major"
           elif [[ "${{ github.event.pull_request.base.ref }}" == "master" ]]; then
