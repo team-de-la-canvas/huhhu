@@ -44,5 +44,6 @@
     "node": "18.16"
   },
   "private": true,
-  "name": "huhhu-hunting-proto-expots"
+  "name": "huhhu-hunting-proto-expots",
+  "version": "0.0.1"
 }

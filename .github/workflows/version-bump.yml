@@ -49,8 +49,8 @@ jobs:
       - name: Bump version and push tag
         id: package
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          git config --local user.email "business.daniel.mass@gmail.com"
+          git config --local user.name "Daniel Mass"
           npm version ${{ steps.pr_analysis.outputs.version_bump }} -m "Upgrade to %s"
           git push
           git push --tags
