@@ -4,6 +4,10 @@ on:
   pull_request:
     types: [opened]
     branches: [master, develop]
+    
+permissions:
+  pull-requests: write
+
 
 jobs:
   label_pr:
