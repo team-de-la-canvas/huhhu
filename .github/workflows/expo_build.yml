@@ -4,7 +4,6 @@ on:
     workflows: ["Version Bump"]
     types:
       - completed
-    branches: [develop]
 
 permissions:
   contents: write
