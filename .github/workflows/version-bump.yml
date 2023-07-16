@@ -43,14 +43,13 @@ jobs:
           GH_TOKEN: ${{ secrets.VERSION_BUMP_PAT }}
 
 
-      - name: Authenticate me
-        run: gh auth login --with-token <<< '${{ secrets.VERSION_BUMP_PAT }}'
-
       - name: Bump version and push tag
         id: package
         run: |
           git config --local user.email "business.daniel.mass@gmail.com"
           git config --local user.name "Daniel Mass"
+          gh auth login --with-token <<< '${{ secrets.VERSION_BUMP_PAT }}'
+          gh auth status
           npm version ${{ steps.pr_analysis.outputs.version_bump }} -m "Upgrade to %s"
           git push
           git push --tags
