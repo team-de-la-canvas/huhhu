@@ -26,7 +26,6 @@ jobs:
 
       - name: Install Dependencies
         run: |
-#          npm ci
           sudo apt-get install jq
 
       - name: Analyze PR and determine version bump
