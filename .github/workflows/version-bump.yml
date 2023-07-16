@@ -51,3 +51,5 @@ jobs:
           npm version ${{ steps.pr_analysis.outputs.version_bump }} -m "Upgrade to %s"
           git push
           git push --tags
+        env:
+          GH_TOKEN: ${{ secrets.VERSION_BUMP_PAT }}
