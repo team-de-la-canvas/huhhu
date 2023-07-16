@@ -21,10 +21,9 @@ jobs:
           node-version: 18
 
       - name: Install Dependencies
-        run: npm ci
-
-      - name: Install dependencies
-        run: sudo apt-get install jq
+        run: |
+#          npm ci
+          sudo apt-get install jq
 
       - name: Analyze PR and determine version bump
         id: pr_analysis
