@@ -48,8 +48,8 @@ jobs:
         run: |
           git config --local user.email "business.daniel.mass@gmail.com"
           git config --local user.name "Daniel Mass"
-          gh auth login --with-token <<< '${{ secrets.VERSION_BUMP_PAT }}'
-          gh auth status
           npm version ${{ steps.pr_analysis.outputs.version_bump }} -m "Upgrade to %s"
           git push
           git push --tags
+        env: 
+          GITHUB_TOKEN: ${{ secrets.VERSION_BUMP_PAT }}
