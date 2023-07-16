@@ -2,7 +2,11 @@ name: Version Bump
 on:
   pull_request:
     types: [closed]
-    branches: [master, development]
+    branches: [master, develop]
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   release:
@@ -18,17 +22,19 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: 18
 
       - name: Install Dependencies
-        run: npm ci
+        run: |
+          sudo apt-get install jq
 
       - name: Analyze PR and determine version bump
         id: pr_analysis
         run: |
           PR_NUMBER=${{ github.event.pull_request.number }}
-          LABELS_JSON=$(gh pr view $PR_NUMBER --json labels -q '.labels.nodes')
-          if [[ "${{ github.event.pull_request.base.ref }}" == "master" ]] && echo "$LABELS_JSON" | grep -q '"name":"major"'; then
+          PR_INFO=$(curl -L   -H "Accept: application/vnd.github+json"   -H "Authorization: Bearer $GH_TOKEN"  -H "X-GitHub-Api-Version: 2022-11-28"   https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER)
+          LABELS=$(jq --argjson data "$PR_INFO" '.labels[].name' <<< "$PR_INFO")
+          if [[ "${{ github.event.pull_request.base.ref }}" == "master" ]] && echo "$LABELS" | grep -q "major"; then
             echo "::set-output name=version_bump::major"
           elif [[ "${{ github.event.pull_request.base.ref }}" == "master" ]]; then
             echo "::set-output name=version_bump::minor"
@@ -36,13 +42,16 @@ jobs:
             echo "::set-output name=version_bump::patch"
           fi
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
+
 
       - name: Bump version and push tag
         id: package
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          git config --local user.email "business.daniel.mass@gmail.com"
+          git config --local user.name "Daniel Mass"
           npm version ${{ steps.pr_analysis.outputs.version_bump }} -m "Upgrade to %s"
           git push
           git push --tags
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
