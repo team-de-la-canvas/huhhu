@@ -29,4 +29,4 @@ jobs:
                 labels: [label]
               });
             }
-          github-token: ${{secrets.VERSION_BUMP_PAT}}
+          github-token: ${{secrets.GITHUB_TOKEN}}
