@@ -4,6 +4,10 @@ on:
     types: [closed]
     branches: [master, develop]
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   release:
     name: Release
@@ -39,7 +43,7 @@ jobs:
             echo "::set-output name=version_bump::patch"
           fi
         env:
-          GH_TOKEN: ${{ secrets.VERSION_BUMP_PAT }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
 
 
       - name: Bump version and push tag
@@ -51,4 +55,4 @@ jobs:
           git push
           git push --tags
         env: 
-          GITHUB_TOKEN: ${{ secrets.VERSION_BUMP_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
