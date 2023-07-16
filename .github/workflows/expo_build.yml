@@ -1,0 +1,56 @@
+name: Internal Release Creation
+on:
+  workflow_run:
+    workflows: ["Version Bump"]
+    types:
+      - completed
+    branches: [develop]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  internal_release_creation:
+    name: Release Creation
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.workflow == 'Version Bump'
+    needs: version_bump
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+          
+      - name: Install Dependencies
+        run: |
+          npm ci
+          npm install -g eas-cli
+          
+      - name: Fetch Labels
+        id: fetch_labels
+        run: |
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          PR_INFO=$(curl -L   -H "Accept: application/vnd.github+json"   -H "Authorization: Bearer $GH_TOKEN"  -H "X-GitHub-Api-Version: 2022-11-28"   https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER)
+          LABELS=$(jq --argjson data "$PR_INFO" '.labels[].name' <<< "$PR_INFO")
+          echo "::set-output name=labels::$LABELS"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
+          
+      - name: Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_EAS_TOKEN }}
+      
+      - name: Create Release
+        id: create_release
+        run: |
+          if [[ echo "${{ needs.fetch_labels.outputs.labels }}" | grep -q "ios" ]]; then
+            eas build --platform ios --profile preview
+          elif [[ echo "${{ needs.fetch_labels.outputs.labels }}" | grep -q "android" ]]; then
+            eas build --platform android --profile preview
+          fi
