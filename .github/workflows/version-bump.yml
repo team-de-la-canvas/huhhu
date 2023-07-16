@@ -4,6 +4,10 @@ on:
     types: [closed]
     branches: [master, develop]
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   release:
     name: Release
@@ -21,10 +25,9 @@ jobs:
           node-version: 18
 
       - name: Install Dependencies
-        run: npm ci
-
-      - name: Install dependencies
-        run: sudo apt-get install jq
+        run: |
+#          npm ci
+          sudo apt-get install jq
 
       - name: Analyze PR and determine version bump
         id: pr_analysis
@@ -40,7 +43,7 @@ jobs:
             echo "::set-output name=version_bump::patch"
           fi
         env:
-          GH_TOKEN: ${{ secrets.VERSION_BUMP_PAT }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
 
 
       - name: Bump version and push tag
@@ -48,8 +51,8 @@ jobs:
         run: |
           git config --local user.email "business.daniel.mass@gmail.com"
           git config --local user.name "Daniel Mass"
-          gh auth login --with-token <<< '${{ secrets.VERSION_BUMP_PAT }}'
-          gh auth status
           npm version ${{ steps.pr_analysis.outputs.version_bump }} -m "Upgrade to %s"
           git push
           git push --tags
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
