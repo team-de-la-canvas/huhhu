@@ -40,6 +40,9 @@
     "start": "expo start --tunnel --web",
     "local": "cross-env API_URL=http://localhost:3000 expo start --lan"
   },
+  "engines": {
+    "node": "18.16"
+  },
   "private": true,
   "name": "huhhu-hunting-proto-expots"
 }
