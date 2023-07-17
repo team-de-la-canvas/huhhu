@@ -80,7 +80,7 @@ jobs:
           LABELS=$(jq --argjson data "$PR_INFO" '.labels[].name' <<< "$PR_INFO")
           echo "::set-output name=labels::$LABELS"
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
+          GH_TOKEN: ${{ secrets.PR_LABEL_PAT }}
 
       - name: Setup EAS
         uses: expo/expo-github-action@v8
@@ -92,7 +92,8 @@ jobs:
         id: create_release
         run: |
           if [[ echo "${{ needs.fetch_labels.outputs.labels }}" | grep -q "ios" ]]; then
-            eas build --platform ios --profile preview
+            eas build --platform ios --profile preview --non-interactive --no-wait 
+          fi
           elif [[ echo "${{ needs.fetch_labels.outputs.labels }}" | grep -q "android" ]]; then
-            eas build --platform android --profile preview
+            eas build --platform android --profile preview --non-interactive --no-wait 
           fi
