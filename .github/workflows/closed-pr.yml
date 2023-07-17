@@ -93,7 +93,6 @@ jobs:
         run: |
           if [[ echo "${{ needs.fetch_labels.outputs.labels }}" | grep -q "ios" ]]; then
             eas build --platform ios --profile preview --non-interactive --no-wait 
-          fi
           elif [[ echo "${{ needs.fetch_labels.outputs.labels }}" | grep -q "android" ]]; then
             eas build --platform android --profile preview --non-interactive --no-wait 
           fi
