@@ -1,0 +1,5 @@
+tunnels:
+  dev-api:
+    proto: http
+    addr: 3000
+    region: eu
