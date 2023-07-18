@@ -11,7 +11,7 @@ import {
 } from "../shared/routes";
 import {LocationModel, MatchCanceledPiggyBagPayload} from "../shared/models";
 import {
-    ApiStates, ApiStatesState,
+    ApiStatesState,
     createApiBuilder,
     createApiHook, createHook,
     createPOSTApiAsyncThunk,
@@ -100,13 +100,11 @@ const huntingSlice = createSlice({
     },
     extraReducers: builder => {
         const apiBuilder = createApiBuilder(builder);
-        apiBuilder.addEndpoint(match,(state, action) => {
+        apiBuilder.addEndpoint(match,(state) => {
             state.huntingActive = true
             console.log("match endpoint success huntingActive")
         })
-        apiBuilder.addEndpoint(setLocation, (state, action)=>{
-
-        })
+        apiBuilder.addEndpoint(setLocation, ()=>{})
         apiBuilder.addEndpoint(getLocationOfMatch, (state,action)=>{
             state.otherLocation = action.payload.clientLocation;
         })
@@ -114,10 +112,10 @@ const huntingSlice = createSlice({
             state.registered = true;
             state.code = action.payload.clientCode;
         });
-        apiBuilder.addEndpoint(invisible,(state, action)=>{
+        apiBuilder.addEndpoint(invisible,(state)=>{
             state.visible = false;
         });
-        apiBuilder.addEndpoint(visible, (state, action) => {
+        apiBuilder.addEndpoint(visible, (state) => {
             state.visible = true;
         });
     }

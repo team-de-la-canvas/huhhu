@@ -7,7 +7,6 @@ import HuntingScreen from "../screens/HuntingScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 
 const Tab = createBottomTabNavigator();
-const Stack = createStackNavigator();
 
 export default function Navigation() {
 
@@ -25,8 +24,8 @@ export default function Navigation() {
                     name="SettingsStack"
                     component={SettingsScreen}
                     options={{
-                        tabBarIcon: ({ size, focused, color }) => (
-                            <Image source={{ width: 30, height: 30, uri:"https://picsum.photos/30/30"}}/>
+                        tabBarIcon: ({ size }) => (
+                            <Image source={{ width: size, height: size, uri:"https://picsum.photos/30/30"}}/>
                         ),
                     }}
                 />
@@ -34,8 +33,8 @@ export default function Navigation() {
                     name="Hunting"
                     component={HuntingScreen}
                     options={{
-                        tabBarIcon: ({ size, focused, color }) => (
-                            <Image source={require('../../assets/arrow-up.png')} style={{ width: 30, height: 30 }}/>
+                        tabBarIcon: ({ size }) => (
+                            <Image source={require('../../assets/arrow-up.png')} style={{ width: size, height: size }}/>
                         ),
                     }}
                 />

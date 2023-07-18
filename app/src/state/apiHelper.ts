@@ -192,7 +192,7 @@ export const createApiBuilder = <SliceType extends { apiStates:ApiStates }> (bui
     }
     const addEndpoint = <RequestType,ResponseType>(thunk:  AsyncThunk<ResponseType, ThunkParams<RequestType>, any>, fulfilled: AsyncThunkFulfilledReducer<SliceType,RequestType,ResponseType>,rejected?:AsyncThunkRejectedReducer<SliceType,RequestType,ResponseType>) => {
         builder
-            .addCase(thunk.pending, (state, action) => {
+            .addCase(thunk.pending, (state) => {
                 state.apiStates[thunk.typePrefix].loading = true;
             })
             .addCase(thunk.fulfilled, (state, action) => {
