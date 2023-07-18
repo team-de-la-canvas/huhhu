@@ -11,7 +11,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
 import {apiUrl} from "./config";
 import {v4 as uuid} from "uuid"
-import {MatchStartedPiggyBagPayload, ResponsePiggyBag} from "../shared/models";
+import {ResponsePiggyBag} from "../shared/models";
 import {flashError} from "../services/flasher";
 import axios, {AxiosError, AxiosResponse} from "axios";
 
@@ -59,11 +59,11 @@ type PiggyPackingCase = {
     applies: (piggyBag: ResponsePiggyBag) => boolean,
     resolve: (dispatch: AppDispatch, piggyBag: ResponsePiggyBag) => void,
 }
-const usePiggyPacking = (piggyPackingCases:PiggyPackingCase[]) => {
+const usePiggyPacking = (piggyPackingCases:PiggyPackingCase[]):(piggyBag: ResponsePiggyBag)=> void =>  {
     
     const dispatch:AppDispatch = useDispatch()
     if (!piggyPackingCases)
-        return (piggyBag: ResponsePiggyBag)=> {};
+        return ()=> {};
     
     return (piggyBag: ResponsePiggyBag) => {
         

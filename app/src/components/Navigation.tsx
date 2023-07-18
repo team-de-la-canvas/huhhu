@@ -1,7 +1,6 @@
 import React, {useEffect} from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createStackNavigator } from "@react-navigation/stack";
 import { Image} from "react-native";
 import HuntingScreen from "../screens/HuntingScreen";
 import SettingsScreen from "../screens/SettingsScreen";
