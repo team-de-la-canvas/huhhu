@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import {StyleSheet, Switch, View} from "react-native";
 import {useEndpointInvisible, useEndpointVisible} from "../state/huntingSlice";
 import {flashError} from "../services/flasher";

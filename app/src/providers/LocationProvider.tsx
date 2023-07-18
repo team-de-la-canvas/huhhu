@@ -2,8 +2,8 @@ import {useEffect, useRef, useState} from "react";
 import * as Location from "expo-location";
 import {flashError} from "../services/flasher";
 import {useEndpointGetLocationOfMatch, useEndpointSetLocation} from "../state/huntingSlice";
-import {AppDispatch, RootState} from "../state/store";
-import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "../state/store";
+import {useSelector} from "react-redux";
 
 const LocationProvider = () => {
 

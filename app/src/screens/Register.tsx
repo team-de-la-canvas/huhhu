@@ -1,9 +1,7 @@
-import React, {useEffect, useState} from "react";
-import {Button, SafeAreaView, StyleSheet, Text, TextInput, View} from "react-native";
-import {AppDispatch} from "../state/store";
+import React, {useState} from "react";
+import {Button, StyleSheet, Text, TextInput, View} from "react-native";
 import {flashError, flashSuccess} from "../services/flasher";
 import {useEndpointRegister} from "../state/huntingSlice";
-// import {useSnackbar} from "notistack";
 
 export default function Register(){
     const [username, setUserName] = useState("");

@@ -1,12 +1,10 @@
-import React, {useEffect, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch, RootState} from "../state/store";
+import React, {useEffect} from "react";
+import {useSelector} from "react-redux";
+import {RootState} from "../state/store";
 import Pointer from "../components/Pointer";
-import * as Location from 'expo-location';
-import {Button, StyleSheet, View,Text} from "react-native";
-import {flashError, flashSuccess, flashWarning} from "../services/flasher";
-import {useEndpointGetLocationOfMatch, useEndpointMatch, useEndpointSetLocation} from "../state/huntingSlice";
-import Slider from "@react-native-community/slider";
+import {Button, StyleSheet, View} from "react-native";
+import {flashError, flashSuccess} from "../services/flasher";
+import {useEndpointMatch} from "../state/huntingSlice";
 import VisibilitySlider from "../components/VisibilitySlider";
 import VisibilitySwitch from "../components/VisibilitySwitch";
 

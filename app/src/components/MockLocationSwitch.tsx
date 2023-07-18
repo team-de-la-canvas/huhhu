@@ -1,12 +1,9 @@
-import React, {useState} from "react";
+import React from "react";
 import {StyleSheet, Switch, View} from "react-native";
 import {
     useDisableMockLocation,
     useEnableMockLocation,
-    useEndpointInvisible,
-    useEndpointVisible, useSetMockLocation
 } from "../state/huntingSlice";
-import {flashError} from "../services/flasher";
 import {useSelector} from "react-redux";
 import {RootState} from "../state/store";
 
