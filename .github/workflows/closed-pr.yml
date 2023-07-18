@@ -1,0 +1,126 @@
+name: Closed PR jobs
+on:
+  pull_request:
+    types: [closed]
+    branches: [master, develop]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  version_bump:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # this is required for the action to be able to see tags
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+
+      - name: Fetch Labels
+        id: fetch_labels
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const issue_number = context.payload.pull_request.number;
+            const response = await github.rest.issues.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue_number,
+            });
+
+            const labels = response.data.labels.map(label => label.name);
+            return labels;
+          result-encoding: string
+          github-token: ${{secrets.READ_ONLY_PAT}}
+
+
+      - name: Analyze PR and determine version bump
+        id: pr_analysis
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const baseRef = context.payload.pull_request.base.ref;
+            const labels = '${{ steps.fetch_labels.outputs.result }}'.split(',');
+            let version_bump = '';
+
+            if (baseRef === 'master') {
+              if (labels.includes('major')) {
+                version_bump = 'major';
+              } else {
+                version_bump = 'minor';
+              }
+            } else {
+              version_bump = 'patch';
+            }
+
+            return version_bump;
+          result-encoding: string
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      
+      
+      
+      - name: Bump version and push tag
+        id: package
+        run: |
+          git config --local user.email "business.daniel.mass@gmail.com"
+          git config --local user.name "Daniel Mass"
+          npm version ${{ steps.pr_analysis.outputs.result }} -m "Upgrade to %s"
+          git push
+          git push --tags
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
+  
+  internal_release_creation:
+    runs-on: ubuntu-latest
+    needs: version_bump
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+
+      - name: Fetch Labels
+        id: fetch_labels
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const issue_number = context.payload.pull_request.number;
+            const response = await github.rest.issues.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue_number,
+            });
+
+            const labels = response.data.labels.map(label => label.name);
+            return labels;
+          result-encoding: string
+          github-token: ${{secrets.READ_ONLY_PAT}}
+            
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_EAS_TOKEN }}
+
+      - name: Create Release
+        id: create_release
+        run: |
+          if echo "${{ steps.fetch_labels.outputs.result }}" | grep -q "ios"; then
+            eas build --platform ios --profile preview --non-interactive --no-wait
+          elif echo "${{ steps.fetch_labels.outputs.result }}" | grep -q "android"; then
+            eas build --platform android --profile preview --non-interactive --no-wait
+          fi
+

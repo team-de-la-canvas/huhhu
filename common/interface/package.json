@@ -1,0 +1,8 @@
+{
+  "name": "@huhhu/interface",
+  "scripts": {
+  },
+  "dependencies": {
+    "uuid": "^9.0.0"
+  }
+}

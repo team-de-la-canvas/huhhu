@@ -4,6 +4,10 @@ on:
   pull_request:
     types: [opened]
     branches: [master, develop]
+    
+permissions:
+  pull-requests: write
+
 
 jobs:
   label_pr:
@@ -29,4 +33,4 @@ jobs:
                 labels: [label]
               });
             }
-          github-token: ${{secrets.VERSION_BUMP_PAT}}
+          github-token: ${{secrets.GITHUB_TOKEN}}
