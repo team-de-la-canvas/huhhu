@@ -16,9 +16,9 @@ import {
     InvisibleRequest,
     InvisibleResponse,
     CancelMatchRequest, CancelMatchResponse, GetLocationOfMatchRequest, GetLocationOfMatchResponse
-} from "../shared/routes";
-import {Client} from "../shared/models";
+} from "@huhhu/interface/src/routes";
 import {randomUUID} from "crypto";
+import {Client} from "@huhhu/interface/src/models";
 
 
 

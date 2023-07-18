@@ -1,0 +1,21 @@
+{
+  "name": "huhhu",
+  "version": "0.1.13",
+  "description": "",
+  "scripts": {
+    "local": "npm run local:api & npm run local:app"
+  },
+  "author": "",
+  "license": "ISC",
+  "workspaces": [
+    "api/*",
+    "app/*",
+    "common/interface"
+  ],
+  "dependencies": {
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.2"
+  }
+}

@@ -18,7 +18,7 @@ export interface LocationModel{
 
 export interface ResponsePiggyBag {
     type: "matchStarted" | "matchCanceled"
-    id: uuid
+    id: any
     payload: MatchStartedPiggyBagPayload | MatchCanceledPiggyBagPayload
 }
 
