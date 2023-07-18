@@ -43,24 +43,35 @@ jobs:
 
       - name: Analyze PR and determine version bump
         id: pr_analysis
-        run: |
-          if [[ "${{ github.event.pull_request.base.ref }}" == "master" ]] && echo "${{ steps.fetch_labels.outputs.result }}" | grep -q "major"; then
-            echo "::set-output name=version_bump::major"
-          elif [[ "${{ github.event.pull_request.base.ref }}" == "master" ]]; then
-            echo "::set-output name=version_bump::minor"
-          else
-            echo "::set-output name=version_bump::patch"
-          fi
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const baseRef = context.payload.pull_request.base.ref;
+            const labels = '${{ steps.fetch_labels.outputs.result }}'.split(',');
+            let version_bump = '';
 
+            if (baseRef === 'master') {
+              if (labels.includes('major')) {
+                version_bump = 'major';
+              } else {
+                version_bump = 'minor';
+              }
+            } else {
+              version_bump = 'patch';
+            }
 
+            return version_bump;
+          result-encoding: string
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      
+      
+      
       - name: Bump version and push tag
         id: package
         run: |
           git config --local user.email "business.daniel.mass@gmail.com"
           git config --local user.name "Daniel Mass"
-          npm version ${{ steps.pr_analysis.outputs.version_bump }} -m "Upgrade to %s"
+          npm version ${{ steps.pr_analysis.outputs.result }} -m "Upgrade to %s"
           git push
           git push --tags
         env: 
