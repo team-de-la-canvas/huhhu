@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="555b4d28-e53c-452d-a008-08ddda2b25e3" name="Changes" comment="removed submodules" />
+    <list id="2c1f1b0b-26f6-4c45-a698-7132b512c489" name="no match available response code" comment="no match available response code" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager">
+    <option name="groupingKeys">
+      <option value="directory" />
+      <option value="repository" />
+    </option>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="TypeScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="ROOT_SYNC" value="DONT_SYNC" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2R9sXcrNNrhOqZ5FZWz3ZmL7KMa" />
+  <component name="ProjectViewState">
+    <option name="autoscrollFromSource" value="true" />
+    <option name="autoscrollToSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "feat/monorepo",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "ts.external.directory.path": "C:\\Users\\code\\AppData\\Local\\JetBrains\\Toolbox\\apps\\WebStorm\\ch-0\\231.9011.35\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\code\hhu\ss23\innovation\team-de-la-canvas\huhhu-webapi-proto\api" />
+      <recent name="C:\Users\code\hhu\ss23\innovation\team-de-la-canvas\huhhu-webapi-proto" />
+      <recent name="C:\Users\code\hhu\ss23\innovation\team-de-la-canvas\huhhu-webapi-proto\.github\workflows" />
+      <recent name="C:\Users\code\hhu\ss23\innovation\team-de-la-canvas\huhhu-webapi-proto\src\main" />
+      <recent name="C:\Users\code\hhu\ss23\innovation\team-de-la-canvas\huhhu-webapi-proto\src" />
+    </key>
+  </component>
+  <component name="RunManager" selected="npm.build-interfaces">
+    <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
+      <deployment type="dockerfile">
+        <settings />
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration name="build-interfaces" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="build-interfaces" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="start" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="start" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.start" />
+        <item itemvalue="npm.build-interfaces" />
+        <item itemvalue="npm.start" />
+        <item itemvalue="npm.build-interfaces" />
+        <item itemvalue="npm.start" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="555b4d28-e53c-452d-a008-08ddda2b25e3" name="Changes" comment="" />
+      <changelist id="2c1f1b0b-26f6-4c45-a698-7132b512c489" name="no match available response code" comment="" />
+      <created>1686673671695</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1686673671695</updated>
+      <workItem from="1686673673018" duration="372000" />
+      <workItem from="1687276170333" duration="10769000" />
+      <workItem from="1687462745322" duration="8108000" />
+      <workItem from="1687503629141" duration="9167000" />
+      <workItem from="1687839692909" duration="6526000" />
+      <workItem from="1687864778069" duration="9685000" />
+      <workItem from="1687983207989" duration="16098000" />
+      <workItem from="1688329565205" duration="2163000" />
+      <workItem from="1688370333377" duration="5462000" />
+      <workItem from="1688467253592" duration="5944000" />
+      <workItem from="1688808828445" duration="37330000" />
+      <workItem from="1689272917171" duration="598000" />
+      <workItem from="1689671749210" duration="754000" />
+    </task>
+    <task id="LOCAL-00001" summary="fix: interfaces.yml, i was wrong about changing it">
+      <created>1687868158155</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1687868158155</updated>
+    </task>
+    <task id="LOCAL-00002" summary="make sure its called client Location is called &quot;clientLocation&quot;">
+      <created>1688218435493</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1688218435493</updated>
+    </task>
+    <task id="LOCAL-00003" summary="make sure its called client Location is called &quot;clientLocation&quot;">
+      <created>1688218487851</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1688218487851</updated>
+    </task>
+    <task id="LOCAL-00004" summary="fix nginx env variable syntax">
+      <created>1688372067552</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1688372067552</updated>
+    </task>
+    <task id="LOCAL-00005" summary="add v4 uuid to any piggybacks, so clients can determine, if they already received their present">
+      <created>1688503716985</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1688503716985</updated>
+    </task>
+    <task id="LOCAL-00006" summary="add v4 uuid to any piggybacks, so clients can determine, if they already received their present">
+      <created>1688503747022</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1688503747022</updated>
+    </task>
+    <task id="LOCAL-00007" summary="some refactoring for matches reducer">
+      <created>1688503794435</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1688503794435</updated>
+    </task>
+    <task id="LOCAL-00008" summary="fix /match &amp; /setLocation">
+      <created>1688841568808</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1688841568810</updated>
+    </task>
+    <task id="LOCAL-00009" summary="fix registration payload">
+      <created>1688855846551</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1688855846552</updated>
+    </task>
+    <task id="LOCAL-00010" summary="fixed sending location in invisible mode">
+      <created>1688914542538</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1688914542538</updated>
+    </task>
+    <task id="LOCAL-00011" summary="fixed matching with the same person twice">
+      <created>1688917199463</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1688917199463</updated>
+    </task>
+    <task id="LOCAL-00012" summary="inexistance of location on /getLocationOfMatch">
+      <created>1688917224798</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1688917224798</updated>
+    </task>
+    <task id="LOCAL-00013" summary="added debug mode">
+      <created>1688929305868</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1688929305868</updated>
+    </task>
+    <task id="LOCAL-00014" summary="fix failing when trying to get invisible location">
+      <created>1688932351479</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1688932351479</updated>
+    </task>
+    <task id="LOCAL-00015" summary="centralize auth logic">
+      <created>1688972532512</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1688972532512</updated>
+    </task>
+    <task id="LOCAL-00016" summary="cancel match">
+      <created>1688972836996</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1688972836996</updated>
+    </task>
+    <task id="LOCAL-00017" summary="no match available response code">
+      <created>1688972849436</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1688972849436</updated>
+    </task>
+    <task id="LOCAL-00018" summary="fixed exception handling and global auth handling">
+      <created>1688977780663</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1688977780663</updated>
+    </task>
+    <task id="LOCAL-00019" summary="fixed /invisible not canceling match">
+      <created>1688979307078</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1688979307078</updated>
+    </task>
+    <task id="LOCAL-00020" summary="add tome to cors">
+      <created>1689092336786</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1689092336786</updated>
+    </task>
+    <task id="LOCAL-00021" summary="add our domains to cors">
+      <created>1689092734416</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1689092734416</updated>
+    </task>
+    <task id="LOCAL-00022" summary="fix cors localhost">
+      <created>1689100309805</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1689100309805</updated>
+    </task>
+    <task id="LOCAL-00023" summary="fix cors localhost &amp; update shared">
+      <created>1689671895138</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1689671895138</updated>
+    </task>
+    <task id="LOCAL-00024" summary="removed submodules">
+      <created>1689672009053</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1689672009053</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="package.json" />
+    <option featureType="com.intellij.fileTypeFactory" implementationName="nginx.conf" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="fix: interfaces.yml, i was wrong about changing it" />
+    <MESSAGE value="make sure its called client Location is called &quot;clientLocation&quot;" />
+    <MESSAGE value="fix nginx env variable syntax" />
+    <MESSAGE value="add v4 uuid to any piggybacks, so clients can determine, if they already received their present" />
+    <MESSAGE value="some refactoring for matches reducer" />
+    <MESSAGE value="fix /match &amp; /setLocation" />
+    <MESSAGE value="fix registration payload" />
+    <MESSAGE value="fixed sending location in invisible mode" />
+    <MESSAGE value="fixed matching with the same person twice" />
+    <MESSAGE value="inexistance of location on /getLocationOfMatch" />
+    <MESSAGE value="added debug mode" />
+    <MESSAGE value="fix failing when trying to get invisible location" />
+    <MESSAGE value="centralize auth logic" />
+    <MESSAGE value="cancel match" />
+    <MESSAGE value="no match available response code" />
+    <MESSAGE value="fixed exception handling and global auth handling" />
+    <MESSAGE value="fixed /invisible not canceling match" />
+    <MESSAGE value="add tome to cors" />
+    <MESSAGE value="add our domains to cors" />
+    <MESSAGE value="fix cors localhost" />
+    <MESSAGE value="fix cors localhost &amp; update shared" />
+    <MESSAGE value="removed submodules" />
+    <option name="LAST_COMMIT_MESSAGE" value="removed submodules" />
+  </component>
+</project>
