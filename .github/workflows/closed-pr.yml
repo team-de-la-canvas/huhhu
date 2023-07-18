@@ -105,6 +105,20 @@ jobs:
             return labels;
           result-encoding: string
           github-token: ${{secrets.READ_ONLY_PAT}}
+          
+      - name: Stop Workflow on build labels not found
+        id: stop_workflow
+        run: |
+          labels=$(echo "${{ steps.fetch_labels.outputs.result }}")
+          if [[ $labels == *"ios"* || $labels == *"android"* ]]; then
+            echo "Build labels found. Proceeding with workflow execution."
+          else
+            echo "No build labels found. Stopping workflow."
+            exit 0
+          fi
+            
+      - name: Install Dependencies
+        run: npm ci
 
       - name: Setup EAS
         uses: expo/expo-github-action@v8
