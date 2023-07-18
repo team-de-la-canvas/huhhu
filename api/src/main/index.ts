@@ -1,4 +1,4 @@
-import express, {NextFunction, Request, Response} from 'express';
+import {NextFunction, Request, Response} from 'express';
 import cors from 'cors';
 import {
     ClientsRequest,
@@ -20,6 +20,7 @@ import {
 import {randomUUID} from "crypto";
 import {Client} from "@huhhu/interface/src/models";
 
+const express = require("express")
 
 
 

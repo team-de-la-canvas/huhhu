@@ -19,5 +19,8 @@ module.exports = {
                 locationAlwaysAndWhenInUsePermission: "Allow app.huhhu to use your location."
             }
         ]
-    ]
+    ],
+    packagerOpts: {
+        config: "metro.config.js"
+    },
 };

@@ -2,9 +2,8 @@
   "name": "@huhhu/api",
   "description": "basic webapi implementation to mock peer to peer connection for huhuu prototype",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npx ts-node src/main/index.ts",
-    "debug": "cross-env debug=true npx ts-node src/main/index.ts"
+    "local": "cross-env debug=true npx ts-node src/main/index.ts"
   },
   "dependencies": {
     "cors": "^2.8.5",

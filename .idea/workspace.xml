@@ -4,17 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="555b4d28-e53c-452d-a008-08ddda2b25e3" name="Changes" comment="workspace.xml">
-      <change afterPath="$PROJECT_DIR$/common/interface/package.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
+    <list default="true" id="555b4d28-e53c-452d-a008-08ddda2b25e3" name="Changes" comment="npm submodules">
+      <change afterPath="$PROJECT_DIR$/app/AppEntry.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/metro.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/api/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/src/main/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/main/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/app.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/app.config.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/app/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/interface/models.ts" beforeDir="false" afterPath="$PROJECT_DIR$/common/interface/src/models.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/interface/routes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/common/interface/src/routes.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <list id="2c1f1b0b-26f6-4c45-a698-7132b512c489" name="no match available response code" comment="no match available response code" />
     <option name="SHOW_DIALOG" value="false" />
@@ -48,6 +48,9 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="ProjectErrors" />
+  </component>
   <component name="ProjectId" id="2R9sXcrNNrhOqZ5FZWz3ZmL7KMa" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
@@ -69,8 +72,8 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "ts.external.directory.path": "C:\\Users\\code\\hhu\\ss23\\innovation\\team-de-la-canvas\\huhhu-hunting-proto-expots\\api\\node_modules\\typescript\\lib",
+    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
+    "ts.external.directory.path": "C:\\Users\\code\\hhu\\ss23\\innovation\\team-de-la-canvas\\huhhu-hunting-proto-expots\\node_modules\\typescript\\lib",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -142,7 +145,8 @@
       <workItem from="1688808828445" duration="37330000" />
       <workItem from="1689272917171" duration="598000" />
       <workItem from="1689671749210" duration="754000" />
-      <workItem from="1689673442239" duration="1504000" />
+      <workItem from="1689673442239" duration="3787000" />
+      <workItem from="1689681932517" duration="3712000" />
     </task>
     <task id="LOCAL-00001" summary="fix: interfaces.yml, i was wrong about changing it">
       <created>1687868158155</created>
@@ -326,7 +330,14 @@
       <option name="project" value="LOCAL" />
       <updated>1689673762319</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="npm submodules">
+      <created>1689675793450</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1689675793450</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -373,6 +384,7 @@
     <MESSAGE value="removed submodules" />
     <MESSAGE value="added common/interface" />
     <MESSAGE value="workspace.xml" />
-    <option name="LAST_COMMIT_MESSAGE" value="workspace.xml" />
+    <MESSAGE value="npm submodules" />
+    <option name="LAST_COMMIT_MESSAGE" value="npm submodules" />
   </component>
 </project>
