@@ -4,18 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="555b4d28-e53c-452d-a008-08ddda2b25e3" name="Changes" comment="npm submodules">
-      <change afterPath="$PROJECT_DIR$/app/AppEntry.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/metro.config.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/api/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/main/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/main/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/app.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/app.config.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/app/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-    </list>
+    <list default="true" id="555b4d28-e53c-452d-a008-08ddda2b25e3" name="Changes" comment="monorepo in working state regarding web local execution" />
     <list id="2c1f1b0b-26f6-4c45-a698-7132b512c489" name="no match available response code" comment="no match available response code" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -146,7 +135,7 @@
       <workItem from="1689272917171" duration="598000" />
       <workItem from="1689671749210" duration="754000" />
       <workItem from="1689673442239" duration="3787000" />
-      <workItem from="1689681932517" duration="3712000" />
+      <workItem from="1689681932517" duration="4049000" />
     </task>
     <task id="LOCAL-00001" summary="fix: interfaces.yml, i was wrong about changing it">
       <created>1687868158155</created>
@@ -337,7 +326,14 @@
       <option name="project" value="LOCAL" />
       <updated>1689675793450</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="monorepo in working state regarding web local execution">
+      <created>1689686015698</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1689686015698</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -360,7 +356,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="fix: interfaces.yml, i was wrong about changing it" />
     <MESSAGE value="make sure its called client Location is called &quot;clientLocation&quot;" />
     <MESSAGE value="fix nginx env variable syntax" />
     <MESSAGE value="add v4 uuid to any piggybacks, so clients can determine, if they already received their present" />
@@ -385,6 +380,7 @@
     <MESSAGE value="added common/interface" />
     <MESSAGE value="workspace.xml" />
     <MESSAGE value="npm submodules" />
-    <option name="LAST_COMMIT_MESSAGE" value="npm submodules" />
+    <MESSAGE value="monorepo in working state regarding web local execution" />
+    <option name="LAST_COMMIT_MESSAGE" value="monorepo in working state regarding web local execution" />
   </component>
 </project>
