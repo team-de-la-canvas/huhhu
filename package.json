@@ -5,7 +5,11 @@
   "scripts": {
     "local:api": "npm --workspace=api run local",
     "local:app": "npm --workspace=app run local",
-    "local": "concurrently \"npm run local:api\" \"npm run local:app\""
+    "local": "concurrently \"npm run local:api\" \"npm run local:app\"",
+    "development:api": "npm --workspace=api run development",
+    "development:app": "npm --workspace=app run development",
+    "development": "concurrently --raw \"npm run development:api 2>&1\" \"npm run development:app 2>&1\"",
+    "dev": "npm run development"
   },
   "workspaces": [
     "api",
@@ -17,6 +21,7 @@
   },
   "devDependencies": {
     "@types/uuid": "^9.0.2",
-    "concurrently": "^8.2.0"
+    "concurrently": "^8.2.0",
+    "node-jq": "^2.3.5"
   }
 }

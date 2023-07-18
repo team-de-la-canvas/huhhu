@@ -76,8 +76,11 @@ const allowedOrigins = ['https://tome.app','https://web.huhhu.app','http://local
 // Configure CORS options
 const corsOptions = {
     origin: function (origin, callback) {
+        console.log("cors origin: ",origin)
         // Check if the origin is allowed or is undefined (for non-browser requests)
         if (allowedOrigins.includes(origin) || !origin) {
+            callback(null, true);
+        } else if (origin && origin.endsWith('.ngrok.io')) {
             callback(null, true);
         } else {
             callback(new Error('Not allowed by CORS'));

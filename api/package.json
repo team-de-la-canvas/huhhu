@@ -3,7 +3,8 @@
   "description": "basic webapi implementation to mock peer to peer connection for huhuu prototype",
   "scripts": {
     "start": "npx ts-node src/main/index.ts",
-    "local": "cross-env debug=true npx ts-node src/main/index.ts"
+    "local": "cross-env debug=true npx ts-node src/main/index.ts",
+    "development": "concurrently --raw \"npm run local 2>&1\" \"npx ngrok start dev-api --config=ngrok.yml 2>&1\""
   },
   "dependencies": {
     "cors": "^2.8.5",
